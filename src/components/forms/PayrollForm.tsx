@@ -226,6 +226,7 @@ export function PayrollForm() {
   const persistedDraft = useMemo(loadPersistedDraft, []);
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(persistedDraft.currentStep ?? 1);
   const submitLock = useRef(false);
+  const skipDraftPersistRef = useRef(false);
   const validateMutation = useValidateBank();
   const submitMutation = useSubmitPayroll();
   const {
@@ -285,11 +286,15 @@ export function PayrollForm() {
   const isSubmitLoading = isSubmitting || submitMutation.isPending;
 
   useEffect(() => {
-    const subscription = watch((values) => savePersistedDraft(currentStep, values));
+    const subscription = watch((values) => {
+      if (skipDraftPersistRef.current) return;
+      savePersistedDraft(currentStep, values);
+    });
     return () => subscription.unsubscribe();
   }, [currentStep, watch]);
 
   useEffect(() => {
+    if (skipDraftPersistRef.current) return;
     savePersistedDraft(currentStep, watch());
   }, [currentStep, watch]);
 
@@ -400,10 +405,14 @@ export function PayrollForm() {
       const response = await submitMutation.mutateAsync(payload);
       if (!response.success) throw new Error(response.message);
       toast.success(`${response.message}: ${response.submissionId}`);
-      clearPersistedDraft();
+      skipDraftPersistRef.current = true;
       reset();
       setValue('formStartedAt', nowIso());
       setCurrentStep(1);
+      window.setTimeout(() => {
+        clearPersistedDraft();
+        skipDraftPersistRef.current = false;
+      }, 0);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Pengiriman gagal');
     } finally {
