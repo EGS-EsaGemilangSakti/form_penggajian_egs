@@ -29,7 +29,7 @@ export const payrollSchema = z
     postalCode: z.string().regex(/^\d{5}$/, 'Kode pos wajib 5 digit'),
     nik: z.string().regex(/^\d{16}$/, 'NIK wajib 16 digit angka'),
     birthPlaceCode: z.string().regex(/^\d{4}$/, 'Tempat lahir wajib dipilih dari daftar kota/kabupaten'),
-    birthPlace: z.string().trim().min(1, 'Tempat lahir wajib diisi').regex(/^[A-Z ]+$/, 'Tempat lahir hanya boleh huruf kapital dan spasi'),
+    birthPlace: z.string().trim().min(1, 'Tempat lahir wajib dipilih dari daftar').regex(/^[A-Z ]+$/, 'Tempat lahir wajib dipilih dari daftar'),
     birthPlaceProvince: z.string().min(1, 'Provinsi tempat lahir wajib terisi'),
     birthDate: z.string().refine((value) => Boolean(value) && new Date(value) <= new Date(), 'Tanggal lahir tidak boleh masa depan'),
     phone: z.string().regex(/^\d{10,15}$/, 'Nomor telepon wajib 10-15 digit'),
