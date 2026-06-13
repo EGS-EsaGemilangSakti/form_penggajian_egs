@@ -48,7 +48,7 @@ export function AddressField({
   }, [addressDetail, villageName, districtName, regencyName, provinceName, postalCode, setValue]);
 
   return (
-    <div className="grid gap-4 md:col-span-2 md:grid-cols-2">
+    <div className="grid min-w-0 gap-4 md:col-span-2 md:grid-cols-2">
       <input type="hidden" {...register('address')} />
       <FieldShell label="Provinsi" error={errors.provinceCode?.message || errors.provinceName?.message}>
         <SearchableSelect

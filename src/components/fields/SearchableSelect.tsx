@@ -73,23 +73,23 @@ export function SearchableSelect({
   };
 
   return (
-    <div ref={rootRef} className="relative">
+    <div ref={rootRef} className="relative min-w-0">
       <button
         type="button"
-        className={`${inputClass} flex items-center justify-between gap-3 text-left`}
+        className={`${inputClass} flex min-w-0 items-center justify-between gap-3 text-left`}
         disabled={disabled || loading}
         aria-expanded={isOpen}
         aria-controls={listboxId}
         onClick={openDropdown}
       >
-        <span className={selectedOption ? 'truncate' : 'truncate text-[#5d5a55]'}>
+        <span className={selectedOption ? 'min-w-0 truncate' : 'min-w-0 truncate text-[#5d5a55]'}>
           {loading ? loadingText : selectedOption?.label ?? placeholder}
         </span>
         <ChevronDown className={`h-4 w-4 shrink-0 text-[#5d5a55] transition ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
       </button>
 
       {isOpen ? (
-        <div className="absolute left-0 right-0 top-full z-30 mt-2 overflow-hidden rounded-md border border-[#f2ca50]/35 bg-white shadow-xl shadow-black/25">
+        <div className="absolute left-0 right-0 top-full z-30 mt-2 min-w-0 overflow-hidden rounded-md border border-[#f2ca50]/35 bg-white shadow-xl shadow-black/25">
           <div className="flex items-center gap-2 border-b border-[#99907c]/20 px-3 py-2">
             <Search className="h-4 w-4 shrink-0 text-[#5d5a55]" aria-hidden="true" />
             <input
@@ -114,7 +114,7 @@ export function SearchableSelect({
                   type="button"
                   role="option"
                   aria-selected={option.value === value}
-                  className={`block w-full px-4 py-3 text-left text-sm transition hover:bg-[#f2ca50]/15 ${
+                  className={`block w-full min-w-0 break-words px-4 py-3 text-left text-sm transition hover:bg-[#f2ca50]/15 ${
                     option.value === value ? 'bg-[#f2ca50]/20 font-semibold text-[#1c1b1b]' : 'text-[#1c1b1b]'
                   }`}
                   onClick={() => {

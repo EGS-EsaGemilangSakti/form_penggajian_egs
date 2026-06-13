@@ -163,14 +163,14 @@ function StepIntro({ step }: { step: 1 | 2 | 3 }) {
 
 function StepCard({ children, title, icon }: { children: ReactNode; title?: string; icon?: ReactNode }) {
   return (
-    <section className="rounded-xl border border-[#d4af37]/15 bg-[#201f1f] p-6 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.4)] sm:p-8">
+    <section className="min-w-0 rounded-xl border border-[#d4af37]/15 bg-[#201f1f] p-6 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.4)] sm:p-8">
       {title ? (
         <h3 className="mb-6 flex items-center gap-3 text-2xl font-semibold text-[#e5e2e1]">
           {icon}
           {title}
         </h3>
       ) : null}
-      <div className="grid gap-5 md:grid-cols-2">{children}</div>
+      <div className="grid min-w-0 gap-5 md:grid-cols-2">{children}</div>
     </section>
   );
 }
@@ -298,6 +298,10 @@ export function PayrollForm() {
       toast.error('Lengkapi semua data wajib pada step ini');
       return;
     }
+    if (currentStep === 2 && watch('accountValidation').status !== 'VALID') {
+      toast.error('Rekening wajib divalidasi dan valid sebelum lanjut');
+      return;
+    }
     setCurrentStep((step) => Math.min(step + 1, 3) as 1 | 2 | 3);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -410,7 +414,7 @@ export function PayrollForm() {
           </StepCard>
 
           <StepCard title="Informasi Bank" icon={<WalletCards className="h-5 w-5 text-[#f2ca50]" />}>
-            <BankField register={register} setValue={setValue} error={errors.bankCode?.message || errors.bankName?.message} onBankChanged={resetValidation} />
+            <BankField register={register} setValue={setValue} watch={watch} error={errors.bankCode?.message || errors.bankName?.message} onBankChanged={resetValidation} />
             <AccountNumberField register={register} setValue={setValue} error={errors.accountNumber?.message} onChanged={resetValidation} />
             <AccountOwnerField register={register} setValue={setValue} error={errors.accountOwner?.message} onChanged={resetValidation} />
             <div className="flex items-end">
