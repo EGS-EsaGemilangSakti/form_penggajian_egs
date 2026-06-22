@@ -31,6 +31,7 @@ Masuk ke Project Settings, tambahkan:
 API_CO_ID_KEY=api_key_api_co_id
 SPREADSHEET_ID=1zc_UbQqmy9aCt1CcKZSxRq276DHfrh46Hts36dGDT0c
 KTP_FOLDER_ID=1jhpp1WleiTwsxI0IltAkFylFGtFO-_AO
+KK_FOLDER_ID=folder_id_kartu_keluarga
 SURAT_KUASA_FOLDER_ID=1mqqs3jVAooV00rQpnD9OIHT-tI4NvEaA
 ALLOWED_ORIGINS=http://localhost:5173,https://egs-esagemilangsakti.github.io,https://form.ptesagemilangsakti.com
 ```

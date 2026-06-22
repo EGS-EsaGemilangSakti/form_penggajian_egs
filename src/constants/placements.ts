@@ -4,7 +4,6 @@ export const PLACEMENTS = [
   'JNT SUNTER',
   'JNT DRIVER PKU',
   'JNT BTN',
-  'FASTRANS',
   'MONDE',
   'JNT SEMARANG',
   'JNT TEGAL',
@@ -16,6 +15,15 @@ export const PLACEMENTS = [
   'SPRINTER JET JKT',
   'GO TO BALI',
   'CARGO BKI',
+  'JNT CARGO SURABAYA',
+  'JNT CARGO LAMPUNG',
+  'JNT EXPRESS PEKANBARU',
+  'JNT CARGO PKU',
+  'JNT JKM CARGO CAKUNG',
+  'JNT CARGO KOSAMBI',
+  'JNT PALANGKARAYA',
+  'MEDQUEST',
+  'PT BYAN BEKASI',
 ] as const;
 
 export const EMPLOYMENT_STATUSES = ['Freelance', 'Kontrak'] as const;

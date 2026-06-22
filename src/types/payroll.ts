@@ -1,6 +1,10 @@
 export type EmploymentStatus = 'Freelance' | 'Kontrak';
 export type Position = 'Admin' | 'Kordinator' | 'Sorter' | 'Driver' | 'Kurir';
 export type OwnershipStatus = 'PRIBADI' | 'ORANG LAIN';
+export type Gender = 'Laki-laki' | 'Perempuan';
+export type MaritalStatus = 'Menikah' | 'Belum Menikah' | 'Cerai Hidup' | 'Cerai Mati';
+export type Religion = 'Islam' | 'Kristen' | 'Protestan' | 'Hindu' | 'Buddha' | 'Khonghucu';
+export type PtkpCode = 'tk0' | 'k1' | 'k2' | 'k3' | 'tk1' | 'tk2' | 'tk3';
 export type AccountValidationStatus = 'UNVALIDATED' | 'VALID' | 'INVALID';
 
 export interface BankOption {
@@ -42,6 +46,10 @@ export interface PayrollFormValues {
   birthPlace: string;
   birthPlaceProvince: string;
   birthDate: string;
+  gender: Gender | '';
+  maritalStatus: MaritalStatus | '';
+  religion: Religion | '';
+  ptkpCode: PtkpCode | '';
   phone: string;
   placement: string;
   employmentStatus: EmploymentStatus | '';
@@ -54,6 +62,7 @@ export interface PayrollFormValues {
   accountValidation: AccountValidationResult;
   ownershipStatus: OwnershipStatus | '';
   ktpFile: FileList;
+  familyCardFile: FileList;
   powerOfAttorneyFile?: FileList;
   dataAgreement: boolean;
   website?: string;
@@ -64,11 +73,12 @@ export interface PayrollSubmitPayload {
   origin: string;
   submittedAt: string;
   website: string;
-  data: Omit<PayrollFormValues, 'ktpFile' | 'powerOfAttorneyFile' | 'dataAgreement' | 'bankCode' | 'bankName'> & {
+  data: Omit<PayrollFormValues, 'ktpFile' | 'familyCardFile' | 'powerOfAttorneyFile' | 'dataAgreement' | 'bankCode' | 'bankName'> & {
     bank: BankOption;
   };
   files: {
     ktp: UploadPayload;
+    familyCard: UploadPayload;
     powerOfAttorney: UploadPayload | null;
   };
 }

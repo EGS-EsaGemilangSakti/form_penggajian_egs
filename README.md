@@ -94,6 +94,7 @@ Salin folder ID untuk `KTP` dan `SURAT_KUASA`.
 API_CO_ID_KEY=api_key_api_co_id
 SPREADSHEET_ID=spreadsheet_id
 KTP_FOLDER_ID=folder_id_ktp
+KK_FOLDER_ID=folder_id_kartu_keluarga
 SURAT_KUASA_FOLDER_ID=folder_id_surat_kuasa
 ALLOWED_ORIGINS=http://localhost:5173,https://username.github.io
 ```

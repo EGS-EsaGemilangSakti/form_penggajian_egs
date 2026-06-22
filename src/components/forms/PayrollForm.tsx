@@ -22,11 +22,13 @@ import { BirthPlaceField } from '../fields/BirthPlaceField';
 import { EmailField } from '../fields/EmailField';
 import { EmploymentStatusField } from '../fields/EmploymentStatusField';
 import { FirstWorkDateField } from '../fields/FirstWorkDateField';
+import { FamilyCardUploadField } from '../fields/FamilyCardUploadField';
 import { FullNameField } from '../fields/FullNameField';
 import { KtpUploadField } from '../fields/KtpUploadField';
 import { NikField } from '../fields/NikField';
 import { OwnershipStatusField } from '../fields/OwnershipStatusField';
 import { PhoneField } from '../fields/PhoneField';
+import { GenderField, MaritalStatusField, PtkpCodeField, ReligionField } from '../fields/PersonalStatusFields';
 import { PlacementField } from '../fields/PlacementField';
 import { PositionField } from '../fields/PositionField';
 import { PowerOfAttorneyUploadField } from '../fields/PowerOfAttorneyUploadField';
@@ -51,6 +53,10 @@ const stepFields = {
     'birthPlace',
     'birthPlaceProvince',
     'birthDate',
+    'gender',
+    'maritalStatus',
+    'religion',
+    'ptkpCode',
     'address',
     'addressDetail',
     'provinceCode',
@@ -76,10 +82,10 @@ const stepFields = {
     'ownershipStatus',
     'powerOfAttorneyFile',
   ],
-  3: ['ktpFile', 'dataAgreement'],
+  3: ['ktpFile', 'familyCardFile', 'dataAgreement'],
 } as const;
 
-type PersistedPayrollValues = Partial<Omit<PayrollFormValues, 'ktpFile' | 'powerOfAttorneyFile'>>;
+type PersistedPayrollValues = Partial<Omit<PayrollFormValues, 'ktpFile' | 'familyCardFile' | 'powerOfAttorneyFile'>>;
 
 interface PersistedDraft {
   currentStep?: 1 | 2 | 3;
@@ -106,6 +112,7 @@ function savePersistedDraft(currentStep: number, values: unknown) {
   if (typeof window === 'undefined') return;
   const persistableValues = { ...(values as Record<string, unknown>) };
   delete persistableValues.ktpFile;
+  delete persistableValues.familyCardFile;
   delete persistableValues.powerOfAttorneyFile;
   window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify({ currentStep, values: persistableValues }));
 }
@@ -259,6 +266,10 @@ export function PayrollForm() {
       birthPlace: '',
       birthPlaceProvince: '',
       birthDate: '',
+      gender: '',
+      maritalStatus: '',
+      religion: '',
+      ptkpCode: '',
       phone: '',
       placement: '',
       employmentStatus: '',
@@ -360,8 +371,9 @@ export function PayrollForm() {
     submitLock.current = true;
     try {
       const ktp = values.ktpFile.item(0);
+      const familyCard = values.familyCardFile.item(0);
       const powerOfAttorney = values.powerOfAttorneyFile?.item(0) ?? null;
-      if (!ktp || !selectedBank) throw new Error('Data belum lengkap');
+      if (!ktp || !familyCard || !selectedBank) throw new Error('Data belum lengkap');
       const payload = {
         origin: window.location.origin,
         submittedAt: nowIso(),
@@ -385,6 +397,10 @@ export function PayrollForm() {
           birthPlace: values.birthPlace,
           birthPlaceProvince: values.birthPlaceProvince,
           birthDate: toDisplayDate(values.birthDate),
+          gender: values.gender,
+          maritalStatus: values.maritalStatus,
+          religion: values.religion,
+          ptkpCode: values.ptkpCode,
           phone: values.phone,
           placement: values.placement,
           employmentStatus: values.employmentStatus,
@@ -399,6 +415,7 @@ export function PayrollForm() {
         },
         files: {
           ktp: await fileToBase64Payload(ktp),
+          familyCard: await fileToBase64Payload(familyCard),
           powerOfAttorney: powerOfAttorney ? await fileToBase64Payload(powerOfAttorney) : null,
         },
       };
@@ -444,6 +461,10 @@ export function PayrollForm() {
             <PhoneField register={register} setValue={setValue} error={errors.phone?.message} />
             <BirthPlaceField setValue={setValue} watch={watch} error={errors.birthPlaceCode?.message || errors.birthPlace?.message || errors.birthPlaceProvince?.message} />
             <BirthDateField register={register} error={errors.birthDate?.message} />
+            <GenderField register={register} error={errors.gender?.message} />
+            <MaritalStatusField register={register} error={errors.maritalStatus?.message} />
+            <ReligionField register={register} error={errors.religion?.message} />
+            <PtkpCodeField register={register} error={errors.ptkpCode?.message} />
           </StepCard>
 
           <StepCard title="Alamat Domisili" icon={<MapPin className="h-5 w-5 text-[#f2ca50]" />}>
@@ -493,6 +514,7 @@ export function PayrollForm() {
         <div className="space-y-6">
           <StepCard title="Unggah Dokumen" icon={<CloudUpload className="h-5 w-5 text-[#f2ca50]" />}>
             <KtpUploadField register={register} watch={watch} error={errors.ktpFile?.message} />
+            <FamilyCardUploadField register={register} watch={watch} error={errors.familyCardFile?.message} />
           </StepCard>
 
           <StepCard title="Ringkasan Data" icon={<BarChart3 className="h-5 w-5 text-[#f2ca50]" />}>

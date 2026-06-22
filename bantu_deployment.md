@@ -8,6 +8,7 @@
 SPREADSHEET_ID=1zc_UbQqmy9aCt1CcKZSxRq276DHfrh46Hts36dGDT0c
 PAYROLL_UPLOADS_FOLDER_ID=1NtUNujvqMP-2uJmo8qKGrcunT7L88txQ
 KTP_FOLDER_ID=1jhpp1WleiTwsxI0IltAkFylFGtFO-_AO
+KK_FOLDER_ID=folder_id_kartu_keluarga
 SURAT_KUASA_FOLDER_ID=1mqqs3jVAooV00rQpnD9OIHT-tI4NvEaA
 
 # Script Properties yang perlu diisi di Google Apps Script
@@ -15,6 +16,7 @@ SURAT_KUASA_FOLDER_ID=1mqqs3jVAooV00rQpnD9OIHT-tI4NvEaA
 API_CO_ID_KEY=isi_api_key_api_co_id_di_sini
 SPREADSHEET_ID=1zc_UbQqmy9aCt1CcKZSxRq276DHfrh46Hts36dGDT0c
 KTP_FOLDER_ID=1jhpp1WleiTwsxI0IltAkFylFGtFO-_AO
+KK_FOLDER_ID=folder_id_kartu_keluarga
 SURAT_KUASA_FOLDER_ID=1mqqs3jVAooV00rQpnD9OIHT-tI4NvEaA
 ALLOWED_ORIGINS=http://localhost:5173,https://egs-esagemilangsakti.github.io,https://form.ptesagemilangsakti.com
 
@@ -42,6 +44,7 @@ API key dari API.CO.ID
    API_CO_ID_KEY
    SPREADSHEET_ID
    KTP_FOLDER_ID
+   KK_FOLDER_ID
    SURAT_KUASA_FOLDER_ID
    ALLOWED_ORIGINS
 6. Jalankan setup() di Apps Script.
