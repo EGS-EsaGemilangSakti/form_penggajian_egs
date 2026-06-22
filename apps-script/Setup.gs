@@ -18,8 +18,10 @@ function createPlacementSheets() {
 
 function syncPlacementSheetsFromMain() {
   const mainSheet = getSheet(SHEET_NAME);
+  createSpreadsheetHeadersForSheet(mainSheet);
   const lastRow = mainSheet.getLastRow();
   const rows = lastRow > 1 ? mainSheet.getRange(2, 1, lastRow - 1, HEADERS.length).getValues() : [];
+  const placementColumnIndex = HEADERS.indexOf('Penempatan');
 
   PLACEMENTS.forEach(function (placement) {
     const placementName = getPlacementSheetName(placement);
@@ -31,7 +33,7 @@ function syncPlacementSheetsFromMain() {
     }
 
     const placementRows = rows.filter(function (row) {
-      return String(row[9] || '').trim() === placement;
+      return String(row[placementColumnIndex] || '').trim() === placement;
     });
 
     if (placementRows.length > 0) {

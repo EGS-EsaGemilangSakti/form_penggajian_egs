@@ -12,6 +12,10 @@ const HEADERS = [
   'Tempat Lahir',
   'Tanggal Lahir',
   'Nomor Telepon',
+  'Jenis Kelamin',
+  'Status Pernikahan',
+  'Agama',
+  'PTKP',
   'Penempatan',
   'Status Karyawan',
   'Posisi',
@@ -27,11 +31,7 @@ const HEADERS = [
   'Status Kepemilikan Rekening',
   'KTP URL',
   'Surat Kuasa URL',
-  'Kartu Keluarga URL',
-  'Jenis Kelamin',
-  'Status Pernikahan',
-  'Agama',
-  'PTKP'
+  'Kartu Keluarga URL'
 ];
 const ALLOWED_FIELDS = [
   'email',
@@ -412,6 +412,10 @@ function buildSubmissionRow(submissionId, data, validation, ktpUrl, suratKuasaUr
     data.birthPlace,
     data.birthDate,
     "'" + data.phone,
+    data.gender,
+    data.maritalStatus,
+    data.religion,
+    data.ptkpCode,
     data.placement,
     data.employmentStatus,
     data.position,
@@ -427,11 +431,7 @@ function buildSubmissionRow(submissionId, data, validation, ktpUrl, suratKuasaUr
     data.ownershipStatus,
     ktpUrl,
     suratKuasaUrl,
-    familyCardUrl,
-    data.gender,
-    data.maritalStatus,
-    data.religion,
-    data.ptkpCode
+    familyCardUrl
   ];
 }
 
@@ -449,13 +449,38 @@ function createSpreadsheetHeaders() {
 }
 
 function createSpreadsheetHeadersForSheet(sheet) {
+  if (sheet.getMaxColumns() < HEADERS.length) {
+    sheet.insertColumnsAfter(sheet.getMaxColumns(), HEADERS.length - sheet.getMaxColumns());
+  }
+
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(HEADERS);
     return;
   }
-  const existing = sheet.getRange(1, 1, 1, HEADERS.length).getValues()[0];
+
+  const existingColumnCount = Math.max(sheet.getLastColumn(), 1);
+  const existing = sheet.getRange(1, 1, 1, existingColumnCount).getValues()[0];
   if (existing.join('|') !== HEADERS.join('|')) {
+    const lastRow = sheet.getLastRow();
+    const existingRows = lastRow > 1
+      ? sheet.getRange(2, 1, lastRow - 1, existingColumnCount).getValues()
+      : [];
+    const headerIndexes = {};
+    existing.forEach(function (header, index) {
+      if (header && headerIndexes[header] === undefined) headerIndexes[header] = index;
+    });
+    const reorderedRows = existingRows.map(function (row) {
+      return HEADERS.map(function (header) {
+        const index = headerIndexes[header];
+        return index === undefined ? '' : row[index];
+      });
+    });
+
+    sheet.getRange(1, 1, lastRow, Math.max(existingColumnCount, HEADERS.length)).clearContent();
     sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+    if (reorderedRows.length > 0) {
+      sheet.getRange(2, 1, reorderedRows.length, HEADERS.length).setValues(reorderedRows);
+    }
   }
 }
 
