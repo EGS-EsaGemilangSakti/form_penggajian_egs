@@ -20,6 +20,14 @@ export const PLACEMENTS = [
   'JNT PALANGKARAYA',
   'MEDQUEST',
   'PT BIYAN BEKASI',
+  'SUKABUMI',
+  'SUBANG',
+  'BANDUNG 99A',
+  'BDO 3D',
+  'BDO 5J',
+  'MINISO',
+  'SOG 99',
+  'INDRAMAYU',
 ] as const;
 
 export const EMPLOYMENT_STATUSES = ['Freelance', 'Kontrak', 'Reguler'] as const;
