@@ -20,7 +20,7 @@ export function sanitizeTextInput(value: unknown): string {
 }
 
 export function sanitizeUpper(value: unknown): string {
-  return sanitizeText(value).toUpperCase();
+  return sanitizeTextInput(value).toUpperCase();
 }
 
 export function digitsOnly(value: unknown): string {
