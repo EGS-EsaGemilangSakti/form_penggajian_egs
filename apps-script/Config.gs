@@ -11,7 +11,7 @@ const DEFAULT_ALLOWED_ORIGINS = 'http://localhost:5173,https://egs-esagemilangsa
 const ALLOWED_ORIGINS = (SCRIPT_PROPERTIES.getProperty('ALLOWED_ORIGINS') || DEFAULT_ALLOWED_ORIGINS).split(',').map(function (origin) {
   return origin.trim();
 }).filter(String);
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = {
   ktp: ['application/pdf', 'image/jpeg', 'image/png'],
   kartuKeluarga: ['application/pdf', 'image/jpeg', 'image/png'],

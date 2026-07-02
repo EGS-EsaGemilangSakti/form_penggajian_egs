@@ -3,7 +3,7 @@ import { REQUIRED_ACCOUNT_VALIDATION_SCORE } from '../constants/accountValidatio
 import { BANKS } from '../constants/banks';
 import { EMPLOYMENT_STATUSES, OWNERSHIP_STATUSES, PLACEMENTS, POSITIONS } from '../constants/placements';
 import { GENDERS, MARITAL_STATUSES, PTKP_CODES, RELIGIONS } from '../constants/personal';
-import { FAMILY_CARD_MIME_TYPES, KTP_MIME_TYPES, MAX_FILE_SIZE, MAX_IMAGE_SOURCE_FILE_SIZE, POWER_OF_ATTORNEY_MIME_TYPES } from '../utils/validators';
+import { FAMILY_CARD_MIME_TYPES, KTP_MIME_TYPES, MAX_FILE_SIZE, POWER_OF_ATTORNEY_MIME_TYPES } from '../utils/validators';
 
 const fileListSchema = z.custom<FileList>();
 
@@ -22,8 +22,7 @@ function validateUploadFile(
   }
 
   const file = fileList.item(0);
-  const maxSourceSize = file && file.type !== 'application/pdf' ? MAX_IMAGE_SOURCE_FILE_SIZE : MAX_FILE_SIZE;
-  if (!file || !mimeTypes.includes(file.type) || file.size > maxSourceSize) {
+  if (!file || !mimeTypes.includes(file.type) || file.size > MAX_FILE_SIZE) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path,
@@ -87,13 +86,13 @@ export const payrollSchema = z
     if (data.accountValidation.status !== 'VALID' || data.accountValidation.score !== REQUIRED_ACCOUNT_VALIDATION_SCORE) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['accountValidation'], message: `Rekening wajib divalidasi dengan score ${REQUIRED_ACCOUNT_VALIDATION_SCORE}` });
     }
-    validateUploadFile(data.ktpFile, KTP_MIME_TYPES, 'KTP', 'KTP wajib diunggah', 'KTP wajib pdf maksimal 10MB atau gambar maksimal 20MB', ctx, ['ktpFile']);
-    validateUploadFile(data.familyCardFile, FAMILY_CARD_MIME_TYPES, 'Kartu Keluarga', 'Kartu Keluarga wajib diunggah', 'Kartu Keluarga wajib pdf maksimal 10MB atau gambar maksimal 20MB', ctx, ['familyCardFile']);
+    validateUploadFile(data.ktpFile, KTP_MIME_TYPES, 'KTP', 'KTP wajib diunggah', 'KTP wajib pdf, jpg, jpeg, atau png maksimal 5MB', ctx, ['ktpFile']);
+    validateUploadFile(data.familyCardFile, FAMILY_CARD_MIME_TYPES, 'Kartu Keluarga', 'Kartu Keluarga wajib diunggah', 'Kartu Keluarga wajib pdf, jpg, jpeg, atau png maksimal 5MB', ctx, ['familyCardFile']);
 
     const powerOfAttorneyFile = data.powerOfAttorneyFile;
     const hasPowerOfAttorney = powerOfAttorneyFile instanceof FileList && powerOfAttorneyFile.length > 0;
     if (data.ownershipStatus === 'ORANG LAIN' || hasPowerOfAttorney) {
-      validateUploadFile(powerOfAttorneyFile, POWER_OF_ATTORNEY_MIME_TYPES, 'Surat Kuasa', 'Surat kuasa wajib diunggah', 'Surat kuasa wajib pdf maksimal 10MB atau gambar maksimal 20MB', ctx, ['powerOfAttorneyFile']);
+      validateUploadFile(powerOfAttorneyFile, POWER_OF_ATTORNEY_MIME_TYPES, 'Surat Kuasa', 'Surat kuasa wajib diunggah', 'Surat kuasa wajib pdf, jpg, jpeg, atau png maksimal 5MB', ctx, ['powerOfAttorneyFile']);
     }
   });
 

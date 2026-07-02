@@ -1,7 +1,6 @@
 import type { UploadPayload } from '../types/payroll';
 
-export const MAX_FILE_SIZE = 10 * 1024 * 1024;
-export const MAX_IMAGE_SOURCE_FILE_SIZE = 20 * 1024 * 1024;
+export const MAX_FILE_SIZE = 5 * 1024 * 1024;
 export const KTP_MIME_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
 export const FAMILY_CARD_MIME_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
 export const POWER_OF_ATTORNEY_MIME_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
@@ -11,13 +10,19 @@ const COMPRESSED_IMAGE_QUALITY = 0.72;
 const COMPRESSIBLE_IMAGE_TYPES = ['image/jpeg', 'image/png'];
 
 export function isAllowedFile(file: File, allowedMimeTypes: string[]): boolean {
-  return allowedMimeTypes.includes(file.type) && file.size <= getMaxSourceFileSize(file);
+  return allowedMimeTypes.includes(file.type) && file.size <= MAX_FILE_SIZE;
+}
+
+export function formatFileSize(bytes: number): string {
+  if (!Number.isFinite(bytes) || bytes <= 0) return '0 MB';
+  const megabytes = bytes / (1024 * 1024);
+  return `${megabytes.toFixed(megabytes < 1 ? 2 : 1)} MB`;
 }
 
 export async function fileToBase64Payload(file: File, label = 'file'): Promise<UploadPayload> {
   const uploadFile = await prepareUploadFile(file);
   if (uploadFile.size > MAX_FILE_SIZE) {
-    throw new Error(`File ${label} masih melebihi 10MB setelah dikompres: ${file.name}`);
+    throw new Error(`File ${label} masih melebihi 5MB setelah dikompres: ${file.name}`);
   }
 
   return new Promise((resolve, reject) => {
@@ -35,10 +40,6 @@ export async function fileToBase64Payload(file: File, label = 'file'): Promise<U
     };
     reader.readAsDataURL(uploadFile);
   });
-}
-
-function getMaxSourceFileSize(file: File): number {
-  return isCompressibleImage(file) ? MAX_IMAGE_SOURCE_FILE_SIZE : MAX_FILE_SIZE;
 }
 
 function isCompressibleImage(file: File): boolean {
