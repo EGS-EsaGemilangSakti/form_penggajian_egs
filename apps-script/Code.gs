@@ -148,8 +148,8 @@ function handleSubmitPayroll(payload) {
     account_owner: data.accountOwner
   });
 
-  if (!backendValidation.success || backendValidation.status !== 'VALID') {
-    return { success: false, message: 'Rekening tidak valid' };
+  if (!backendValidation.success || backendValidation.status !== 'VALID' || Number(backendValidation.score || 0) !== 10) {
+    return { success: false, message: 'Rekening tidak valid. Score wajib 10' };
   }
 
   const submissionId = generateUUID();
@@ -286,7 +286,7 @@ function validateBankAccount(payload) {
 
   const rawData = parsed.data || parsed;
   const score = Number(rawData.score || 0);
-  const isValid = rawData.is_valid === true && score >= 7;
+  const isValid = rawData.is_valid === true && score === 10;
   const validationTimestamp = new Date().toISOString();
 
   return {

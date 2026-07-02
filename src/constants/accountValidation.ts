@@ -1,0 +1,2 @@
+export const REQUIRED_ACCOUNT_VALIDATION_SCORE = 10;
+

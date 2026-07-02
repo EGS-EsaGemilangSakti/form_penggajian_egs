@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { REQUIRED_ACCOUNT_VALIDATION_SCORE } from '../constants/accountValidation';
 import { BANKS } from '../constants/banks';
 import { EMPLOYMENT_STATUSES, OWNERSHIP_STATUSES, PLACEMENTS, POSITIONS } from '../constants/placements';
 import { GENDERS, MARITAL_STATUSES, PTKP_CODES, RELIGIONS } from '../constants/personal';
@@ -82,8 +83,8 @@ export const payrollSchema = z
     formStartedAt: z.string().min(1),
   })
   .superRefine((data, ctx) => {
-    if (data.accountValidation.status !== 'VALID') {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['accountValidation'], message: 'Rekening wajib divalidasi dan valid' });
+    if (data.accountValidation.status !== 'VALID' || data.accountValidation.score !== REQUIRED_ACCOUNT_VALIDATION_SCORE) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['accountValidation'], message: `Rekening wajib divalidasi dengan score ${REQUIRED_ACCOUNT_VALIDATION_SCORE}` });
     }
     validateUploadFile(data.ktpFile, KTP_MIME_TYPES, 'KTP', 'KTP wajib diunggah', 'KTP wajib pdf, jpg, jpeg, atau png maksimal 10MB', ctx, ['ktpFile']);
     validateUploadFile(data.familyCardFile, FAMILY_CARD_MIME_TYPES, 'Kartu Keluarga', 'Kartu Keluarga wajib diunggah', 'Kartu Keluarga wajib pdf, jpg, jpeg, atau png maksimal 10MB', ctx, ['familyCardFile']);

@@ -2,8 +2,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, ArrowRight, BarChart3, BriefcaseBusiness, Check, CloudUpload, Info, Loader2, MapPin, Send, ShieldCheck, WalletCards } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { DefaultValues } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { REQUIRED_ACCOUNT_VALIDATION_SCORE } from '../../constants/accountValidation';
 import { BANKS } from '../../constants/banks';
 import { useSubmitPayroll } from '../../hooks/useSubmitPayroll';
 import { useValidateBank } from '../../hooks/useValidateBank';
@@ -92,6 +94,47 @@ interface PersistedDraft {
   values?: PersistedPayrollValues;
 }
 
+function getEmptyFormValues(): DefaultValues<PayrollFormValues> {
+  return {
+    email: '',
+    fullName: '',
+    address: '',
+    addressDetail: '',
+    provinceCode: '',
+    provinceName: '',
+    regencyCode: '',
+    regencyName: '',
+    districtCode: '',
+    districtName: '',
+    villageCode: '',
+    villageName: '',
+    postalCode: '',
+    nik: '',
+    birthPlaceCode: '',
+    birthPlace: '',
+    birthPlaceProvince: '',
+    birthDate: '',
+    gender: '',
+    maritalStatus: '',
+    religion: '',
+    ptkpCode: '',
+    phone: '',
+    placement: '',
+    employmentStatus: '',
+    position: '',
+    firstWorkDate: '',
+    bankCode: '',
+    bankName: '',
+    accountNumber: '',
+    accountOwner: '',
+    accountValidation: { ...defaultValidation },
+    ownershipStatus: '',
+    dataAgreement: false,
+    website: '',
+    formStartedAt: nowIso(),
+  };
+}
+
 function loadPersistedDraft(): PersistedDraft {
   if (typeof window === 'undefined') return {};
   try {
@@ -121,6 +164,10 @@ function clearPersistedDraft() {
   if (typeof window !== 'undefined') {
     window.localStorage.removeItem(DRAFT_STORAGE_KEY);
   }
+}
+
+function isAccountValidationAccepted(validation: PayrollFormValues['accountValidation']): boolean {
+  return validation.status === 'VALID' && validation.score === REQUIRED_ACCOUNT_VALIDATION_SCORE;
 }
 
 function Stepper({ currentStep }: { currentStep: number }) {
@@ -248,42 +295,7 @@ export function PayrollForm() {
     resolver: zodResolver(payrollSchema),
     mode: 'onBlur',
     defaultValues: {
-      email: '',
-      fullName: '',
-      address: '',
-      addressDetail: '',
-      provinceCode: '',
-      provinceName: '',
-      regencyCode: '',
-      regencyName: '',
-      districtCode: '',
-      districtName: '',
-      villageCode: '',
-      villageName: '',
-      postalCode: '',
-      nik: '',
-      birthPlaceCode: '',
-      birthPlace: '',
-      birthPlaceProvince: '',
-      birthDate: '',
-      gender: '',
-      maritalStatus: '',
-      religion: '',
-      ptkpCode: '',
-      phone: '',
-      placement: '',
-      employmentStatus: '',
-      position: '',
-      firstWorkDate: '',
-      bankCode: '',
-      bankName: '',
-      accountNumber: '',
-      accountOwner: '',
-      accountValidation: defaultValidation,
-      ownershipStatus: '',
-      dataAgreement: false,
-      website: '',
-      formStartedAt: nowIso(),
+      ...getEmptyFormValues(),
       ...persistedDraft.values,
     },
   });
@@ -293,7 +305,7 @@ export function PayrollForm() {
   const bankCode = watch('bankCode');
   const dataAgreement = watch('dataAgreement');
   const summaryValues = watch();
-  const canSubmit = accountValidation.status === 'VALID' && dataAgreement && !isSubmitting && !submitMutation.isPending;
+  const canSubmit = isAccountValidationAccepted(accountValidation) && dataAgreement && !isSubmitting && !submitMutation.isPending;
   const isSubmitLoading = isSubmitting || submitMutation.isPending;
 
   useEffect(() => {
@@ -348,8 +360,8 @@ export function PayrollForm() {
       toast.error('Lengkapi semua data wajib pada step ini');
       return;
     }
-    if (currentStep === 2 && watch('accountValidation').status !== 'VALID') {
-      toast.error('Rekening wajib divalidasi dan valid sebelum lanjut');
+    if (currentStep === 2 && !isAccountValidationAccepted(watch('accountValidation'))) {
+      toast.error(`Rekening wajib divalidasi dengan score ${REQUIRED_ACCOUNT_VALIDATION_SCORE} sebelum lanjut`);
       return;
     }
     setCurrentStep((step) => Math.min(step + 1, 3) as 1 | 2 | 3);
@@ -423,11 +435,10 @@ export function PayrollForm() {
       if (!response.success) throw new Error(response.message);
       toast.success(`${response.message}: ${response.submissionId}`);
       skipDraftPersistRef.current = true;
-      reset();
-      setValue('formStartedAt', nowIso());
+      clearPersistedDraft();
+      reset(getEmptyFormValues());
       setCurrentStep(1);
       window.setTimeout(() => {
-        clearPersistedDraft();
         skipDraftPersistRef.current = false;
       }, 0);
     } catch (error) {
