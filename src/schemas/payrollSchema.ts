@@ -4,13 +4,33 @@ import { EMPLOYMENT_STATUSES, OWNERSHIP_STATUSES, PLACEMENTS, POSITIONS } from '
 import { GENDERS, MARITAL_STATUSES, PTKP_CODES, RELIGIONS } from '../constants/personal';
 import { FAMILY_CARD_MIME_TYPES, KTP_MIME_TYPES, MAX_FILE_SIZE, POWER_OF_ATTORNEY_MIME_TYPES } from '../utils/validators';
 
-const fileListSchema = z.custom<FileList>((value) => value instanceof FileList && value.length > 0, {
-  message: 'File wajib diunggah',
-});
+const fileListSchema = z.custom<FileList>();
 
-function validateFile(fileList: FileList, mimeTypes: string[]): boolean {
+function validateUploadFile(
+  fileList: unknown,
+  mimeTypes: string[],
+  label: string,
+  requiredMessage: string,
+  invalidMessage: string,
+  ctx: z.RefinementCtx,
+  path: string[],
+): boolean {
+  if (!(fileList instanceof FileList) || fileList.length === 0) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path, message: requiredMessage });
+    return false;
+  }
+
   const file = fileList.item(0);
-  return Boolean(file && mimeTypes.includes(file.type) && file.size <= MAX_FILE_SIZE);
+  if (!file || !mimeTypes.includes(file.type) || file.size > MAX_FILE_SIZE) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path,
+      message: `${invalidMessage}: ${file?.name || label}`,
+    });
+    return false;
+  }
+
+  return true;
 }
 
 export const payrollSchema = z
@@ -54,8 +74,8 @@ export const payrollSchema = z
       message: z.string(),
     }),
     ownershipStatus: z.enum(OWNERSHIP_STATUSES, { message: 'Status kepemilikan rekening wajib dipilih' }),
-    ktpFile: fileListSchema.refine((fileList) => validateFile(fileList, KTP_MIME_TYPES), 'KTP wajib pdf, jpg, jpeg, atau png maksimal 10MB'),
-    familyCardFile: fileListSchema.refine((fileList) => validateFile(fileList, FAMILY_CARD_MIME_TYPES), 'Kartu Keluarga wajib pdf, jpg, jpeg, atau png maksimal 10MB'),
+    ktpFile: fileListSchema,
+    familyCardFile: fileListSchema,
     powerOfAttorneyFile: z.custom<FileList>().optional(),
     dataAgreement: z.literal(true, { errorMap: () => ({ message: 'Pernyataan wajib disetujui' }) }),
     website: z.string().optional(),
@@ -65,13 +85,13 @@ export const payrollSchema = z
     if (data.accountValidation.status !== 'VALID') {
       ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['accountValidation'], message: 'Rekening wajib divalidasi dan valid' });
     }
-    const fileList = data.powerOfAttorneyFile;
-    const hasFile = fileList instanceof FileList && fileList.length > 0;
-    if (data.ownershipStatus === 'ORANG LAIN' && !hasFile) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['powerOfAttorneyFile'], message: 'Surat kuasa wajib diunggah' });
-    }
-    if (hasFile && !validateFile(fileList, POWER_OF_ATTORNEY_MIME_TYPES)) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['powerOfAttorneyFile'], message: 'Surat kuasa wajib pdf, jpg, jpeg, atau png maksimal 10MB' });
+    validateUploadFile(data.ktpFile, KTP_MIME_TYPES, 'KTP', 'KTP wajib diunggah', 'KTP wajib pdf, jpg, jpeg, atau png maksimal 10MB', ctx, ['ktpFile']);
+    validateUploadFile(data.familyCardFile, FAMILY_CARD_MIME_TYPES, 'Kartu Keluarga', 'Kartu Keluarga wajib diunggah', 'Kartu Keluarga wajib pdf, jpg, jpeg, atau png maksimal 10MB', ctx, ['familyCardFile']);
+
+    const powerOfAttorneyFile = data.powerOfAttorneyFile;
+    const hasPowerOfAttorney = powerOfAttorneyFile instanceof FileList && powerOfAttorneyFile.length > 0;
+    if (data.ownershipStatus === 'ORANG LAIN' || hasPowerOfAttorney) {
+      validateUploadFile(powerOfAttorneyFile, POWER_OF_ATTORNEY_MIME_TYPES, 'Surat Kuasa', 'Surat kuasa wajib diunggah', 'Surat kuasa wajib pdf, jpg, jpeg, atau png maksimal 10MB', ctx, ['powerOfAttorneyFile']);
     }
   });
 

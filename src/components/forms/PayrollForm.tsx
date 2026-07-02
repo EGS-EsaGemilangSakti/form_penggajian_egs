@@ -414,9 +414,9 @@ export function PayrollForm() {
           bank: selectedBank,
         },
         files: {
-          ktp: await fileToBase64Payload(ktp),
-          familyCard: await fileToBase64Payload(familyCard),
-          powerOfAttorney: powerOfAttorney ? await fileToBase64Payload(powerOfAttorney) : null,
+          ktp: await fileToBase64Payload(ktp, 'KTP'),
+          familyCard: await fileToBase64Payload(familyCard, 'Kartu Keluarga'),
+          powerOfAttorney: powerOfAttorney ? await fileToBase64Payload(powerOfAttorney, 'Surat Kuasa') : null,
         },
       };
       const response = await submitMutation.mutateAsync(payload);
@@ -504,7 +504,7 @@ export function PayrollForm() {
 
           {ownershipStatus === 'ORANG LAIN' ? (
             <StepCard title="Unggah Dokumen" icon={<CloudUpload className="h-5 w-5 text-[#f2ca50]" />}>
-              <PowerOfAttorneyUploadField register={register} watch={watch} required error={errors.powerOfAttorneyFile?.message} />
+              <PowerOfAttorneyUploadField register={register} watch={watch} trigger={trigger} required error={errors.powerOfAttorneyFile?.message} />
             </StepCard>
           ) : null}
         </div>
@@ -513,8 +513,8 @@ export function PayrollForm() {
       {currentStep === 3 ? (
         <div className="space-y-6">
           <StepCard title="Unggah Dokumen" icon={<CloudUpload className="h-5 w-5 text-[#f2ca50]" />}>
-            <KtpUploadField register={register} watch={watch} error={errors.ktpFile?.message} />
-            <FamilyCardUploadField register={register} watch={watch} error={errors.familyCardFile?.message} />
+            <KtpUploadField register={register} watch={watch} trigger={trigger} error={errors.ktpFile?.message} />
+            <FamilyCardUploadField register={register} watch={watch} trigger={trigger} error={errors.familyCardFile?.message} />
           </StepCard>
 
           <StepCard title="Ringkasan Data" icon={<BarChart3 className="h-5 w-5 text-[#f2ca50]" />}>

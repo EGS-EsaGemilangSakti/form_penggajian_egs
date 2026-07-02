@@ -1,12 +1,23 @@
 import { Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import type { UseFormRegister, UseFormWatch } from 'react-hook-form';
+import type { UseFormRegister, UseFormTrigger, UseFormWatch } from 'react-hook-form';
 import type { PayrollFormValues } from '../../types/payroll';
 
-export function FamilyCardUploadField({ register, watch, error }: { register: UseFormRegister<PayrollFormValues>; watch: UseFormWatch<PayrollFormValues>; error?: string }) {
+export function FamilyCardUploadField({
+  register,
+  watch,
+  trigger,
+  error,
+}: {
+  register: UseFormRegister<PayrollFormValues>;
+  watch: UseFormWatch<PayrollFormValues>;
+  trigger: UseFormTrigger<PayrollFormValues>;
+  error?: string;
+}) {
   const [preview, setPreview] = useState('');
   const fileList = watch('familyCardFile');
   const file = fileList?.item(0);
+  const fileRegister = register('familyCardFile', { onChange: () => void trigger('familyCardFile') });
 
   useEffect(() => {
     if (!file || !file.type.startsWith('image/')) {
@@ -31,7 +42,7 @@ export function FamilyCardUploadField({ register, watch, error }: { register: Us
         )}
         <p className="text-sm font-semibold tracking-[0.05em] text-white">{file ? file.name : 'Upload Foto Kartu Keluarga'}</p>
         <p className="mt-1 max-w-52 text-xs font-medium leading-4 text-[#d0c5af]">Format JPG, PNG, atau PDF. Maks 10MB.</p>
-        <input className="absolute inset-0 cursor-pointer opacity-0" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" {...register('familyCardFile')} />
+        <input className="absolute inset-0 cursor-pointer opacity-0" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" {...fileRegister} />
       </div>
       {error ? <span className="mt-2 block text-sm text-accent">{error}</span> : null}
     </label>

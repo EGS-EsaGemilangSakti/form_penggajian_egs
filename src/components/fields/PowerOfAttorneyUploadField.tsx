@@ -1,22 +1,25 @@
 import { FileText } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import type { UseFormRegister, UseFormWatch } from 'react-hook-form';
+import type { UseFormRegister, UseFormTrigger, UseFormWatch } from 'react-hook-form';
 import type { PayrollFormValues } from '../../types/payroll';
 
 export function PowerOfAttorneyUploadField({
   register,
   watch,
+  trigger,
   error,
   required,
 }: {
   register: UseFormRegister<PayrollFormValues>;
   watch: UseFormWatch<PayrollFormValues>;
+  trigger: UseFormTrigger<PayrollFormValues>;
   error?: string;
   required: boolean;
 }) {
   const [preview, setPreview] = useState('');
   const fileList = watch('powerOfAttorneyFile');
   const file = fileList?.item(0);
+  const fileRegister = register('powerOfAttorneyFile', { onChange: () => void trigger('powerOfAttorneyFile') });
 
   useEffect(() => {
     if (!file || !file.type.startsWith('image/')) {
@@ -43,7 +46,7 @@ export function PowerOfAttorneyUploadField({
           {file ? file.name : 'Upload Surat Kuasa'}
         </p>
         <p className="mt-1 max-w-52 text-xs font-medium leading-4 text-[#d0c5af]">Format PDF, JPG, JPEG, atau PNG. Maks 10MB. Wajib jika rekening milik orang lain.</p>
-        <input className="absolute inset-0 cursor-pointer opacity-0" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" {...register('powerOfAttorneyFile')} />
+        <input className="absolute inset-0 cursor-pointer opacity-0" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" {...fileRegister} />
       </div>
       {error ? <span className="mt-2 block text-sm text-accent">{error}</span> : null}
     </label>

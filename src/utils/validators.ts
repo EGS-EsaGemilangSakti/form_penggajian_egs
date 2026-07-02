@@ -9,10 +9,10 @@ export function isAllowedFile(file: File, allowedMimeTypes: string[]): boolean {
   return allowedMimeTypes.includes(file.type) && file.size <= MAX_FILE_SIZE;
 }
 
-export function fileToBase64Payload(file: File): Promise<UploadPayload> {
+export function fileToBase64Payload(file: File, label = 'file'): Promise<UploadPayload> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onerror = () => reject(new Error('Gagal membaca file'));
+    reader.onerror = () => reject(new Error(`Gagal membaca file ${label}: ${file.name}`));
     reader.onload = () => {
       const result = String(reader.result || '');
       const base64 = result.includes(',') ? result.split(',')[1] : result;
