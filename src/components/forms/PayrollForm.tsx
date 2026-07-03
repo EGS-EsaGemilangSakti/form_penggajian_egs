@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { DefaultValues } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { REQUIRED_ACCOUNT_VALIDATION_SCORE } from '../../constants/accountValidation';
+import { MIN_ACCOUNT_VALIDATION_SCORE } from '../../constants/accountValidation';
 import { BANKS } from '../../constants/banks';
 import { useSubmitPayroll } from '../../hooks/useSubmitPayroll';
 import { useValidateBank } from '../../hooks/useValidateBank';
@@ -167,7 +167,7 @@ function clearPersistedDraft() {
 }
 
 function isAccountValidationAccepted(validation: PayrollFormValues['accountValidation']): boolean {
-  return validation.status === 'VALID' && validation.score === REQUIRED_ACCOUNT_VALIDATION_SCORE;
+  return validation.status === 'VALID' && validation.score !== null && validation.score >= MIN_ACCOUNT_VALIDATION_SCORE;
 }
 
 function Stepper({ currentStep }: { currentStep: number }) {
@@ -361,7 +361,7 @@ export function PayrollForm() {
       return;
     }
     if (currentStep === 2 && !isAccountValidationAccepted(watch('accountValidation'))) {
-      toast.error(`Rekening wajib divalidasi dengan score ${REQUIRED_ACCOUNT_VALIDATION_SCORE} sebelum lanjut`);
+      toast.error(`Rekening wajib divalidasi dengan score minimal ${MIN_ACCOUNT_VALIDATION_SCORE} sebelum lanjut`);
       return;
     }
     setCurrentStep((step) => Math.min(step + 1, 3) as 1 | 2 | 3);

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { REQUIRED_ACCOUNT_VALIDATION_SCORE } from '../constants/accountValidation';
+import { MIN_ACCOUNT_VALIDATION_SCORE } from '../constants/accountValidation';
 import { BANKS } from '../constants/banks';
 import { EMPLOYMENT_STATUSES, OWNERSHIP_STATUSES, PLACEMENTS, POSITIONS } from '../constants/placements';
 import { GENDERS, MARITAL_STATUSES, PTKP_CODES, RELIGIONS } from '../constants/personal';
@@ -66,7 +66,7 @@ export const payrollSchema = z
     bankCode: z.string().refine((code) => BANKS.some((bank) => bank.bank_code === code), 'Bank wajib dipilih'),
     bankName: z.string().min(1, 'Bank wajib dipilih'),
     accountNumber: z.string().regex(/^\d{5,30}$/, 'Nomor rekening wajib 5-30 digit angka'),
-    accountOwner: z.string().trim().min(1, 'Nama pemilik rekening wajib diisi').regex(/^[A-Z ]+$/, 'Nama pemilik rekening hanya boleh huruf kapital dan spasi'),
+    accountOwner: z.string().trim().min(1, 'Nama pemilik rekening wajib diisi').regex(/^[A-Z .]+$/, 'Nama pemilik rekening hanya boleh huruf kapital, titik, dan spasi'),
     accountValidation: z.object({
       status: z.enum(['UNVALIDATED', 'VALID', 'INVALID']),
       score: z.number().nullable(),
@@ -83,8 +83,8 @@ export const payrollSchema = z
     formStartedAt: z.string().min(1),
   })
   .superRefine((data, ctx) => {
-    if (data.accountValidation.status !== 'VALID' || data.accountValidation.score !== REQUIRED_ACCOUNT_VALIDATION_SCORE) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['accountValidation'], message: `Rekening wajib divalidasi dengan score ${REQUIRED_ACCOUNT_VALIDATION_SCORE}` });
+    if (data.accountValidation.status !== 'VALID' || data.accountValidation.score === null || data.accountValidation.score < MIN_ACCOUNT_VALIDATION_SCORE) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['accountValidation'], message: `Rekening wajib divalidasi dengan score minimal ${MIN_ACCOUNT_VALIDATION_SCORE}` });
     }
     validateUploadFile(data.ktpFile, KTP_MIME_TYPES, 'KTP', 'KTP wajib diunggah', 'KTP wajib pdf, jpg, jpeg, atau png maksimal 5MB', ctx, ['ktpFile']);
     validateUploadFile(data.familyCardFile, FAMILY_CARD_MIME_TYPES, 'Kartu Keluarga', 'Kartu Keluarga wajib diunggah', 'Kartu Keluarga wajib pdf, jpg, jpeg, atau png maksimal 5MB', ctx, ['familyCardFile']);

@@ -69,6 +69,7 @@ const ALLOWED_FIELDS = [
   'bank'
 ];
 const PLACEMENTS = ['JNT CARGO CIREBON', 'MONDE', 'JNT SEMARANG', 'JNT TEGAL', 'JNT PATI', 'JNT EXPRESS MEDAN', 'JNT SMQ 05', 'JNT SMQ 99', 'OB HQ', 'SPRINTER JET JKT', 'GO TO BALI', 'CARGO BKI', 'JNT CARGO SURABAYA', 'JNT CARGO LAMPUNG', 'JNT EXPRESS LAMPUNG', 'JNT EXPRESS PEKANBARU', 'JNT CARGO PKU', 'JNT JKM CARGO CAKUNG', 'JNT CARGO KOSAMBI', 'JNT PALANGKARAYA', 'MEDQUEST', 'PT BIYAN BEKASI'];
+const MIN_ACCOUNT_VALIDATION_SCORE = 9;
 const EMPLOYMENT_STATUSES = ['Freelance', 'Kontrak', 'Reguler'];
 const POSITIONS = ['Admin', 'Kordinator', 'Sorter', 'Driver', 'Kurir'];
 const OWNERSHIP_STATUSES = ['PRIBADI', 'ORANG LAIN'];
@@ -148,8 +149,8 @@ function handleSubmitPayroll(payload) {
     account_owner: data.accountOwner
   });
 
-  if (!backendValidation.success || backendValidation.status !== 'VALID' || Number(backendValidation.score || 0) !== 10) {
-    return { success: false, message: 'Rekening tidak valid. Score wajib 10' };
+  if (!backendValidation.success || backendValidation.status !== 'VALID' || Number(backendValidation.score || 0) < MIN_ACCOUNT_VALIDATION_SCORE) {
+    return { success: false, message: 'Rekening tidak valid. Score minimal ' + MIN_ACCOUNT_VALIDATION_SCORE };
   }
 
   const submissionId = generateUUID();
@@ -203,7 +204,7 @@ function validatePayload(data) {
   if (!/^\d{2}-\d{2}-\d{4}$/.test(data.firstWorkDate || '')) throw new Error('Tanggal kerja pertama tidak valid');
   if (!validateBank(data.bank)) throw new Error('Bank tidak valid');
   if (!/^\d{5,30}$/.test(data.accountNumber || '')) throw new Error('Nomor rekening tidak valid');
-  if (!/^[A-Z ]+$/.test(data.accountOwner || '')) throw new Error('Nama pemilik rekening tidak valid');
+  if (!/^[A-Z .]+$/.test(data.accountOwner || '')) throw new Error('Nama pemilik rekening tidak valid');
   if (OWNERSHIP_STATUSES.indexOf(data.ownershipStatus) === -1) throw new Error('Status kepemilikan rekening tidak valid');
 
   return {
@@ -263,7 +264,7 @@ function validateBank(bank) {
 function validateBankAccount(payload) {
   if (!validateBank({ bank_code: payload.bank_code, bank_name: payload.bank_name })) throw new Error('Bank tidak valid');
   if (!/^\d{5,30}$/.test(payload.account_number || '')) throw new Error('Nomor rekening tidak valid');
-  if (!/^[A-Z ]+$/.test(payload.account_owner || '')) throw new Error('Nama pemilik rekening tidak valid');
+  if (!/^[A-Z .]+$/.test(payload.account_owner || '')) throw new Error('Nama pemilik rekening tidak valid');
 
   const apiKey = SCRIPT_PROPERTIES.getProperty('API_CO_ID_KEY');
   if (!apiKey) throw new Error('API_CO_ID_KEY belum diatur');
@@ -286,7 +287,7 @@ function validateBankAccount(payload) {
 
   const rawData = parsed.data || parsed;
   const score = Number(rawData.score || 0);
-  const isValid = rawData.is_valid === true && score === 10;
+  const isValid = rawData.is_valid === true && score >= MIN_ACCOUNT_VALIDATION_SCORE;
   const validationTimestamp = new Date().toISOString();
 
   return {
