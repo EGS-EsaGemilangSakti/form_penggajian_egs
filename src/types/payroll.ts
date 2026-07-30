@@ -1,5 +1,5 @@
 export type EmploymentStatus = 'Freelance' | 'Kontrak';
-export type Position = 'Admin' | 'Kordinator' | 'Sorter' | 'Driver' | 'Kurir';
+export type Position = 'Admin' | 'Kordinator' | 'Sorter' | 'Driver' | 'Kurir' | 'KURIR' | 'Harian Lepas (HL)';
 export type OwnershipStatus = 'PRIBADI' | 'ORANG LAIN';
 export type Gender = 'Laki-laki' | 'Perempuan';
 export type MaritalStatus = 'Menikah' | 'Belum Menikah' | 'Cerai Hidup' | 'Cerai Mati';
@@ -52,6 +52,8 @@ export interface PayrollFormValues {
   ptkpCode: PtkpCode | '';
   phone: string;
   placement: string;
+  hub: string;
+  employeeId: string;
   employmentStatus: EmploymentStatus | '';
   position: Position | '';
   firstWorkDate: string;

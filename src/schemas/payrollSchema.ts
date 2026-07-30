@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { MIN_ACCOUNT_VALIDATION_SCORE } from '../constants/accountValidation';
 import { BANKS } from '../constants/banks';
-import { EMPLOYMENT_STATUSES, OWNERSHIP_STATUSES, PLACEMENTS, POSITIONS } from '../constants/placements';
+import { EMPLOYMENT_STATUSES, LAZADA_HUBS, LAZADA_POSITIONS, OWNERSHIP_STATUSES, PLACEMENTS, POSITIONS } from '../constants/placements';
 import { GENDERS, MARITAL_STATUSES, PTKP_CODES, RELIGIONS } from '../constants/personal';
 import { FAMILY_CARD_MIME_TYPES, KTP_MIME_TYPES, MAX_FILE_SIZE, POWER_OF_ATTORNEY_MIME_TYPES } from '../utils/validators';
 
@@ -60,8 +60,10 @@ export const payrollSchema = z
     ptkpCode: z.enum(PTKP_CODES, { message: 'PTKP wajib dipilih' }),
     phone: z.string().regex(/^\d{10,15}$/, 'Nomor telepon wajib 10-15 digit'),
     placement: z.enum(PLACEMENTS, { message: 'Penempatan wajib dipilih' }),
+    hub: z.string(),
+    employeeId: z.string().max(100, 'ID maksimal 100 karakter'),
     employmentStatus: z.enum(EMPLOYMENT_STATUSES, { message: 'Status karyawan wajib dipilih' }),
-    position: z.enum(POSITIONS, { message: 'Posisi wajib dipilih' }),
+    position: z.enum([...POSITIONS, ...LAZADA_POSITIONS], { message: 'Posisi wajib dipilih' }),
     firstWorkDate: z.string().min(1, 'Tanggal kerja pertama wajib diisi'),
     bankCode: z.string().refine((code) => BANKS.some((bank) => bank.bank_code === code), 'Bank wajib dipilih'),
     bankName: z.string().min(1, 'Bank wajib dipilih'),
@@ -83,6 +85,20 @@ export const payrollSchema = z
     formStartedAt: z.string().min(1),
   })
   .superRefine((data, ctx) => {
+    if (data.placement === 'LAZADA') {
+      if (!LAZADA_HUBS.includes(data.hub as (typeof LAZADA_HUBS)[number])) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['hub'], message: 'Hub wajib dipilih' });
+      }
+      if (!data.employeeId.trim()) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['employeeId'], message: 'ID wajib diisi' });
+      }
+      if (!LAZADA_POSITIONS.includes(data.position as (typeof LAZADA_POSITIONS)[number])) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['position'], message: 'Posisi LAZADA tidak valid' });
+      }
+    } else if (!POSITIONS.includes(data.position as (typeof POSITIONS)[number])) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['position'], message: 'Posisi tidak valid untuk penempatan ini' });
+    }
+
     if (data.accountValidation.status !== 'VALID' || data.accountValidation.score === null || data.accountValidation.score < MIN_ACCOUNT_VALIDATION_SCORE) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['accountValidation'], message: `Rekening wajib divalidasi dengan score minimal ${MIN_ACCOUNT_VALIDATION_SCORE}` });
     }

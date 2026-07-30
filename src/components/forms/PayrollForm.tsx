@@ -27,6 +27,7 @@ import { FirstWorkDateField } from '../fields/FirstWorkDateField';
 import { FamilyCardUploadField } from '../fields/FamilyCardUploadField';
 import { FullNameField } from '../fields/FullNameField';
 import { KtpUploadField } from '../fields/KtpUploadField';
+import { LazadaFields } from '../fields/LazadaFields';
 import { NikField } from '../fields/NikField';
 import { OwnershipStatusField } from '../fields/OwnershipStatusField';
 import { PhoneField } from '../fields/PhoneField';
@@ -73,6 +74,8 @@ const stepFields = {
   ],
   2: [
     'placement',
+    'hub',
+    'employeeId',
     'employmentStatus',
     'position',
     'firstWorkDate',
@@ -120,6 +123,8 @@ function getEmptyFormValues(): DefaultValues<PayrollFormValues> {
     ptkpCode: '',
     phone: '',
     placement: '',
+    hub: '',
+    employeeId: '',
     employmentStatus: '',
     position: '',
     firstWorkDate: '',
@@ -303,6 +308,7 @@ export function PayrollForm() {
   const accountValidation = watch('accountValidation');
   const ownershipStatus = watch('ownershipStatus');
   const bankCode = watch('bankCode');
+  const placement = watch('placement');
   const dataAgreement = watch('dataAgreement');
   const summaryValues = watch();
   const canSubmit = isAccountValidationAccepted(accountValidation) && dataAgreement && !isSubmitting && !submitMutation.isPending;
@@ -320,6 +326,18 @@ export function PayrollForm() {
     if (skipDraftPersistRef.current) return;
     savePersistedDraft(currentStep, watch());
   }, [currentStep, watch]);
+
+  useEffect(() => {
+    const allowedPositions = placement === 'LAZADA' ? ['KURIR', 'Harian Lepas (HL)'] : ['Admin', 'Kordinator', 'Sorter', 'Driver', 'Kurir'];
+    const currentPosition = watch('position');
+    if (currentPosition && !allowedPositions.includes(currentPosition)) {
+      setValue('position', '', { shouldDirty: true, shouldValidate: true });
+    }
+    if (placement !== 'LAZADA') {
+      setValue('hub', '', { shouldDirty: true });
+      setValue('employeeId', '', { shouldDirty: true });
+    }
+  }, [placement, setValue, watch]);
 
   const resetValidation = () => {
     setValue('accountValidation', defaultValidation, { shouldValidate: true });
@@ -415,6 +433,8 @@ export function PayrollForm() {
           ptkpCode: values.ptkpCode,
           phone: values.phone,
           placement: values.placement,
+          hub: values.hub,
+          employeeId: values.employeeId,
           employmentStatus: values.employmentStatus,
           position: values.position,
           firstWorkDate: toDisplayDate(values.firstWorkDate),
@@ -488,8 +508,11 @@ export function PayrollForm() {
         <div className="space-y-6">
           <StepCard title="Detail Penempatan" icon={<BriefcaseBusiness className="h-5 w-5 text-[#f2ca50]" />}>
             <PlacementField register={register} setValue={setValue} watch={watch} error={errors.placement?.message} />
+            {placement === 'LAZADA' ? (
+              <LazadaFields register={register} setValue={setValue} watch={watch} hubError={errors.hub?.message} employeeIdError={errors.employeeId?.message} />
+            ) : null}
             <EmploymentStatusField register={register} error={errors.employmentStatus?.message} />
-            <PositionField register={register} error={errors.position?.message} />
+            <PositionField register={register} watch={watch} error={errors.position?.message} />
             <FirstWorkDateField register={register} error={errors.firstWorkDate?.message} />
           </StepCard>
 
@@ -537,6 +560,8 @@ export function PayrollForm() {
             <div className="space-y-6 md:col-span-2">
               <SummaryItem label="Email" value={summaryValues.email} />
               <SummaryItem label="Kantor Cabang" value={summaryValues.placement} />
+              {summaryValues.placement === 'LAZADA' ? <SummaryItem label="Hub" value={summaryValues.hub} /> : null}
+              {summaryValues.placement === 'LAZADA' ? <SummaryItem label="ID" value={summaryValues.employeeId} /> : null}
               <SummaryItem label="Tanggal Mulai" value={formatSummaryDate(summaryValues.firstWorkDate)} />
               <SummaryItem label="Bank" value={summaryValues.bankName} />
               <SummaryItem label="Status Rekening" value={summaryValues.accountValidation.status} />
