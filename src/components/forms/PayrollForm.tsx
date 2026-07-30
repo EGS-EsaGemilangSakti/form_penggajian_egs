@@ -241,8 +241,7 @@ function StepCard({ children, title, icon }: { children: ReactNode; title?: stri
 }
 
 function formatSummaryDate(value: string): string {
-  if (!value) return '-';
-  return new Date(value).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+  return toDisplayDate(value) || '-';
 }
 
 function SummaryItem({ label, value }: { label: string; value: string }) {
@@ -426,7 +425,7 @@ export function PayrollForm() {
           birthPlaceCode: values.birthPlaceCode,
           birthPlace: values.birthPlace,
           birthPlaceProvince: values.birthPlaceProvince,
-          birthDate: toDisplayDate(values.birthDate),
+          birthDate: values.birthDate,
           gender: values.gender,
           maritalStatus: values.maritalStatus,
           religion: values.religion,
@@ -437,7 +436,7 @@ export function PayrollForm() {
           employeeId: values.employeeId,
           employmentStatus: values.employmentStatus,
           position: values.position,
-          firstWorkDate: toDisplayDate(values.firstWorkDate),
+          firstWorkDate: values.firstWorkDate,
           accountNumber: values.accountNumber,
           accountOwner: values.accountOwner,
           accountValidation: values.accountValidation,
@@ -491,7 +490,7 @@ export function PayrollForm() {
             <NikField register={register} setValue={setValue} error={errors.nik?.message} />
             <PhoneField register={register} setValue={setValue} error={errors.phone?.message} />
             <BirthPlaceField setValue={setValue} watch={watch} error={errors.birthPlaceCode?.message || errors.birthPlace?.message || errors.birthPlaceProvince?.message} />
-            <BirthDateField register={register} error={errors.birthDate?.message} />
+            <BirthDateField register={register} setValue={setValue} error={errors.birthDate?.message} />
             <GenderField register={register} error={errors.gender?.message} />
             <MaritalStatusField register={register} error={errors.maritalStatus?.message} />
             <ReligionField register={register} error={errors.religion?.message} />
@@ -513,7 +512,7 @@ export function PayrollForm() {
             ) : null}
             <EmploymentStatusField register={register} error={errors.employmentStatus?.message} />
             <PositionField register={register} watch={watch} error={errors.position?.message} />
-            <FirstWorkDateField register={register} error={errors.firstWorkDate?.message} />
+            <FirstWorkDateField register={register} setValue={setValue} error={errors.firstWorkDate?.message} />
           </StepCard>
 
           <StepCard title="Informasi Bank" icon={<WalletCards className="h-5 w-5 text-[#f2ca50]" />}>

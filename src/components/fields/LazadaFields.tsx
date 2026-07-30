@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import type { UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { LAZADA_HUBS } from '../../constants/placements';
 import type { PayrollFormValues } from '../../types/payroll';
+import { digitsOnly } from '../../utils/sanitize';
 import { FieldShell, inputClass } from './FieldShell';
 import { SearchableSelect } from './SearchableSelect';
 
@@ -31,7 +32,19 @@ export function LazadaFields({ register, setValue, watch, hubError, employeeIdEr
         />
       </FieldShell>
       <FieldShell label="ID" error={employeeIdError}>
-        <input className={inputClass} placeholder="Masukkan ID" maxLength={100} {...register('employeeId')} />
+        <input
+          className={inputClass}
+          type="text"
+          inputMode="numeric"
+          placeholder="Masukkan ID"
+          maxLength={100}
+          {...register('employeeId')}
+          onChange={(event) => setValue('employeeId', digitsOnly(event.target.value), {
+            shouldDirty: true,
+            shouldTouch: true,
+            shouldValidate: true,
+          })}
+        />
       </FieldShell>
     </>
   );

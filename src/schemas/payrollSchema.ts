@@ -4,6 +4,7 @@ import { BANKS } from '../constants/banks';
 import { EMPLOYMENT_STATUSES, LAZADA_HUBS, LAZADA_POSITIONS, OWNERSHIP_STATUSES, PLACEMENTS, POSITIONS } from '../constants/placements';
 import { GENDERS, MARITAL_STATUSES, PTKP_CODES, RELIGIONS } from '../constants/personal';
 import { FAMILY_CARD_MIME_TYPES, KTP_MIME_TYPES, MAX_FILE_SIZE, POWER_OF_ATTORNEY_MIME_TYPES } from '../utils/validators';
+import { parseDisplayDate } from '../utils/formatters';
 
 const fileListSchema = z.custom<FileList>();
 
@@ -53,7 +54,12 @@ export const payrollSchema = z
     birthPlaceCode: z.string().regex(/^\d{4}$/, 'Tempat lahir wajib dipilih dari daftar kota/kabupaten'),
     birthPlace: z.string().trim().min(1, 'Tempat lahir wajib dipilih dari daftar').regex(/^[A-Za-z ]+$/, 'Tempat lahir wajib dipilih dari daftar'),
     birthPlaceProvince: z.string().min(1, 'Provinsi tempat lahir wajib terisi'),
-    birthDate: z.string().refine((value) => Boolean(value) && new Date(value) <= new Date(), 'Tanggal lahir tidak boleh masa depan'),
+    birthDate: z.string()
+      .refine((value) => parseDisplayDate(value) !== null, 'Tanggal lahir wajib berformat DD/MM/YYYY')
+      .refine((value) => {
+        const date = parseDisplayDate(value);
+        return date !== null && date <= new Date();
+      }, 'Tanggal lahir tidak boleh masa depan'),
     gender: z.enum(GENDERS, { message: 'Jenis kelamin wajib dipilih' }),
     maritalStatus: z.enum(MARITAL_STATUSES, { message: 'Status pernikahan wajib dipilih' }),
     religion: z.enum(RELIGIONS, { message: 'Agama wajib dipilih' }),
@@ -61,10 +67,12 @@ export const payrollSchema = z
     phone: z.string().regex(/^\d{10,15}$/, 'Nomor telepon wajib 10-15 digit'),
     placement: z.enum(PLACEMENTS, { message: 'Penempatan wajib dipilih' }),
     hub: z.string(),
-    employeeId: z.string().max(100, 'ID maksimal 100 karakter'),
+    employeeId: z.string()
+      .max(100, 'ID maksimal 100 digit')
+      .regex(/^\d*$/, 'ID hanya boleh berisi angka'),
     employmentStatus: z.enum(EMPLOYMENT_STATUSES, { message: 'Status karyawan wajib dipilih' }),
     position: z.enum([...POSITIONS, ...LAZADA_POSITIONS], { message: 'Posisi wajib dipilih' }),
-    firstWorkDate: z.string().min(1, 'Tanggal kerja pertama wajib diisi'),
+    firstWorkDate: z.string().refine((value) => parseDisplayDate(value) !== null, 'Tanggal kerja pertama wajib berformat DD/MM/YYYY'),
     bankCode: z.string().refine((code) => BANKS.some((bank) => bank.bank_code === code), 'Bank wajib dipilih'),
     bankName: z.string().min(1, 'Bank wajib dipilih'),
     accountNumber: z.string().regex(/^\d{5,30}$/, 'Nomor rekening wajib 5-30 digit angka'),

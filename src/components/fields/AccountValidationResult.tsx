@@ -1,5 +1,6 @@
 import { MIN_ACCOUNT_VALIDATION_SCORE } from '../../constants/accountValidation';
 import type { AccountValidationResult as ValidationResult } from '../../types/payroll';
+import { toDisplayDate } from '../../utils/formatters';
 
 export function AccountValidationResult({ result }: { result: ValidationResult }) {
   if (result.status === 'UNVALIDATED') {
@@ -14,7 +15,7 @@ export function AccountValidationResult({ result }: { result: ValidationResult }
       <p>Score: {result.score ?? 0}</p>
       {!isValid ? <p>Score minimal {MIN_ACCOUNT_VALIDATION_SCORE} agar bisa lanjut.</p> : null}
       {result.validatedName ? <p>Nama hasil masking: {result.validatedName}</p> : null}
-      {result.validationTimestamp ? <p>Waktu validasi: {new Date(result.validationTimestamp).toLocaleString('id-ID')}</p> : null}
+      {result.validationTimestamp ? <p>Tanggal validasi: {toDisplayDate(result.validationTimestamp)}</p> : null}
     </div>
   );
 }
