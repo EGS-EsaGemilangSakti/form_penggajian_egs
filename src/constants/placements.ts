@@ -26,7 +26,7 @@ export const PLACEMENTS = [
 ] as const;
 
 export const EMPLOYMENT_STATUSES = ['Freelance', 'Kontrak', 'Reguler'] as const;
-export const POSITIONS = ['Admin', 'Kordinator', 'Sorter', 'Driver', 'Kurir'] as const;
+export const POSITIONS = ['Admin', 'Kordinator', 'Sorter', 'Driver', 'Kurir', 'Office Boy'] as const;
 export const LAZADA_POSITIONS = ['KURIR', 'Harian Lepas (HL)'] as const;
 export const LAZADA_HUBS = [
   'DKI Jakarta / Kota Jakarta Barat',
