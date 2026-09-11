@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { MIN_ACCOUNT_VALIDATION_SCORE } from '../../constants/accountValidation';
 import { BANKS } from '../../constants/banks';
+import { getPositionsForPlacement } from '../../constants/placements';
 import { useSubmitPayroll } from '../../hooks/useSubmitPayroll';
 import { useValidateBank } from '../../hooks/useValidateBank';
 import { payrollSchema } from '../../schemas/payrollSchema';
@@ -327,10 +328,10 @@ export function PayrollForm() {
   }, [currentStep, watch]);
 
   useEffect(() => {
-    const allowedPositions = placement === 'LAZADA' ? ['KURIR', 'Harian Lepas (HL)'] : ['Admin', 'Kordinator', 'Sorter', 'Driver', 'Kurir'];
+    const allowedPositions = getPositionsForPlacement(placement);
     const currentPosition = watch('position');
-    if (currentPosition && !allowedPositions.includes(currentPosition)) {
-      setValue('position', '', { shouldDirty: true, shouldValidate: true });
+    if ((currentPosition || placement === 'BIYAN SECURITY') && !allowedPositions.includes(currentPosition)) {
+      setValue('position', placement === 'BIYAN SECURITY' ? 'SECURITY' : '', { shouldDirty: true, shouldValidate: true });
     }
     if (placement !== 'LAZADA') {
       setValue('hub', '', { shouldDirty: true });

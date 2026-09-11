@@ -1,10 +1,10 @@
 import type { UseFormRegister, UseFormWatch } from 'react-hook-form';
-import { LAZADA_POSITIONS, POSITIONS } from '../../constants/placements';
+import { getPositionsForPlacement } from '../../constants/placements';
 import type { PayrollFormValues } from '../../types/payroll';
 import { FieldShell, inputClass } from './FieldShell';
 
 export function PositionField({ register, watch, error }: { register: UseFormRegister<PayrollFormValues>; watch: UseFormWatch<PayrollFormValues>; error?: string }) {
-  const positions = watch('placement') === 'LAZADA' ? LAZADA_POSITIONS : POSITIONS;
+  const positions = getPositionsForPlacement(watch('placement'));
   return (
     <FieldShell label="Posisi" error={error}>
       <select className={inputClass} {...register('position')}>

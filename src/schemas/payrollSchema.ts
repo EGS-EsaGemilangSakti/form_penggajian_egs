@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { MIN_ACCOUNT_VALIDATION_SCORE } from '../constants/accountValidation';
 import { BANKS } from '../constants/banks';
-import { EMPLOYMENT_STATUSES, LAZADA_HUBS, LAZADA_POSITIONS, OWNERSHIP_STATUSES, PLACEMENTS, POSITIONS } from '../constants/placements';
+import { BIYAN_SECURITY_POSITIONS, EMPLOYMENT_STATUSES, LAZADA_HUBS, LAZADA_POSITIONS, OWNERSHIP_STATUSES, PLACEMENTS, POSITIONS } from '../constants/placements';
 import { GENDERS, MARITAL_STATUSES, PTKP_CODES, RELIGIONS } from '../constants/personal';
 import { FAMILY_CARD_MIME_TYPES, KTP_MIME_TYPES, MAX_FILE_SIZE, POWER_OF_ATTORNEY_MIME_TYPES } from '../utils/validators';
 import { parseDisplayDate } from '../utils/formatters';
@@ -71,7 +71,7 @@ export const payrollSchema = z
       .max(100, 'ID maksimal 100 digit')
       .regex(/^\d*$/, 'ID hanya boleh berisi angka'),
     employmentStatus: z.enum(EMPLOYMENT_STATUSES, { message: 'Status karyawan wajib dipilih' }),
-    position: z.enum([...POSITIONS, ...LAZADA_POSITIONS], { message: 'Posisi wajib dipilih' }),
+    position: z.enum([...POSITIONS, ...LAZADA_POSITIONS, ...BIYAN_SECURITY_POSITIONS], { message: 'Posisi wajib dipilih' }),
     firstWorkDate: z.string().refine((value) => parseDisplayDate(value) !== null, 'Tanggal kerja pertama wajib berformat DD/MM/YYYY'),
     bankCode: z.string().refine((code) => BANKS.some((bank) => bank.bank_code === code), 'Bank wajib dipilih'),
     bankName: z.string().min(1, 'Bank wajib dipilih'),
@@ -102,6 +102,10 @@ export const payrollSchema = z
       }
       if (!LAZADA_POSITIONS.includes(data.position as (typeof LAZADA_POSITIONS)[number])) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['position'], message: 'Posisi LAZADA tidak valid' });
+      }
+    } else if (data.placement === 'BIYAN SECURITY') {
+      if (!BIYAN_SECURITY_POSITIONS.includes(data.position as (typeof BIYAN_SECURITY_POSITIONS)[number])) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['position'], message: 'Posisi BIYAN SECURITY harus SECURITY' });
       }
     } else if (!POSITIONS.includes(data.position as (typeof POSITIONS)[number])) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['position'], message: 'Posisi tidak valid untuk penempatan ini' });

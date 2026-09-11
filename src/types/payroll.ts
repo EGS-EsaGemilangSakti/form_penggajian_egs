@@ -1,5 +1,5 @@
 export type EmploymentStatus = 'Freelance' | 'Kontrak';
-export type Position = 'Admin' | 'Kordinator' | 'Sorter' | 'Driver' | 'Kurir' | 'KURIR' | 'Harian Lepas (HL)';
+export type Position = 'Admin' | 'Kordinator' | 'Sorter' | 'Driver' | 'Kurir' | 'KURIR' | 'Harian Lepas (HL)' | 'SECURITY';
 export type OwnershipStatus = 'PRIBADI' | 'ORANG LAIN';
 export type Gender = 'Laki-laki' | 'Perempuan';
 export type MaritalStatus = 'Menikah' | 'Belum Menikah' | 'Cerai Hidup' | 'Cerai Mati';

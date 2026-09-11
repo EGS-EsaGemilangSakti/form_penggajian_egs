@@ -22,12 +22,20 @@ export const PLACEMENTS = [
   'JNT PALANGKARAYA',
   'MEDQUEST',
   'PT BIYAN BEKASI',
+  'BIYAN SECURITY',
   'LAZADA',
 ] as const;
 
 export const EMPLOYMENT_STATUSES = ['Freelance', 'Kontrak', 'Reguler'] as const;
 export const POSITIONS = ['Admin', 'Kordinator', 'Sorter', 'Driver', 'Kurir', 'Office Boy'] as const;
 export const LAZADA_POSITIONS = ['KURIR', 'Harian Lepas (HL)'] as const;
+export const BIYAN_SECURITY_POSITIONS = ['SECURITY'] as const;
+
+export function getPositionsForPlacement(placement: string): readonly string[] {
+  if (placement === 'LAZADA') return LAZADA_POSITIONS;
+  if (placement === 'BIYAN SECURITY') return BIYAN_SECURITY_POSITIONS;
+  return POSITIONS;
+}
 export const LAZADA_HUBS = [
   'DKI Jakarta / Kota Jakarta Barat',
   'DKI Jakarta / Kota Jakarta Pusat',
