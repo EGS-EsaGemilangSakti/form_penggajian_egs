@@ -1,1 +1,1 @@
-export const MIN_ACCOUNT_VALIDATION_SCORE = 9;
+export const MIN_ACCOUNT_VALIDATION_SCORE = 7;
