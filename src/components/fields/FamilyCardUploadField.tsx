@@ -1,5 +1,6 @@
 import { Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { usePreparedUpload } from '../../hooks/usePreparedUpload';
 import type { UseFormRegister, UseFormTrigger, UseFormWatch } from 'react-hook-form';
 import type { PayrollFormValues } from '../../types/payroll';
 import { formatFileSize } from '../../utils/validators';
@@ -18,6 +19,7 @@ export function FamilyCardUploadField({
   const [preview, setPreview] = useState('');
   const fileList = watch('familyCardFile');
   const file = fileList?.item(0);
+  const preparation = usePreparedUpload(file, 'Kartu Keluarga');
   const fileRegister = register('familyCardFile', { onChange: () => void trigger('familyCardFile') });
 
   useEffect(() => {
@@ -46,6 +48,7 @@ export function FamilyCardUploadField({
         <p className="mt-1 max-w-52 text-xs font-medium leading-4 text-[#d0c5af]">Format JPG, PNG, atau PDF. Maks 5MB per file.</p>
         <input className="absolute inset-0 cursor-pointer opacity-0" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" {...fileRegister} />
       </div>
+      {preparation ? <span role={preparation.failed ? 'alert' : 'status'} className={`mt-2 block text-sm ${preparation.failed ? 'text-accent' : 'text-[#d0c5af]'}`}>{preparation.message}</span> : null}
       {error ? <span className="mt-2 block text-sm text-accent">{error}</span> : null}
     </label>
   );
