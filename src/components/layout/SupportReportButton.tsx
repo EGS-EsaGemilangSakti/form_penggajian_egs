@@ -79,7 +79,7 @@ export function SupportReportButton({ formName }: { formName: string }) {
             <span className="mt-2 block text-xs text-[#d0c5af]">Maksimal 1.000 karakter.</span>
           </label>
           {error ? <p role="alert" className="rounded-lg bg-red-950 p-3 text-sm text-red-200">{error}</p> : null}
-          <p className="text-xs leading-5 text-[#d0c5af]">WhatsApp akan terbuka dengan pesan terisi ke 0857-3166-0813. Periksa pesan, lalu tekan Kirim di WhatsApp.</p>
+          <p className="text-xs leading-5 text-[#d0c5af]">WhatsApp akan terbuka dengan pesan terisi ke 0857-1084-0402. Periksa pesan, lalu tekan Kirim di WhatsApp.</p>
           <button type="submit" className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#f2ca50] px-4 py-3 text-sm font-bold text-[#3c2f00] transition hover:bg-[#ffda62] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f2ca50]">
             <Send className="h-4 w-4" aria-hidden="true" />
             Lanjut ke WhatsApp

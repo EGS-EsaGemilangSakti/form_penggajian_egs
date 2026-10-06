@@ -28,5 +28,5 @@ export function buildSupportReportUrl(report: SupportReport, formName: string): 
     throw new Error('Pilih tipe kendala.');
   }
   lines.push('', 'Deskripsi kendala:', description);
-  return `https://wa.me/6285731660813?text=${encodeURIComponent(lines.join('\n'))}`;
+  return `https://wa.me/6285710840402?text=${encodeURIComponent(lines.join('\n'))}`;
 }
