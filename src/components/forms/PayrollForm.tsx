@@ -330,8 +330,8 @@ export function PayrollForm() {
   useEffect(() => {
     const allowedPositions = getPositionsForPlacement(placement);
     const currentPosition = watch('position');
-    if ((currentPosition || placement === 'BIYAN SECURITY') && !allowedPositions.includes(currentPosition)) {
-      setValue('position', placement === 'BIYAN SECURITY' ? 'SECURITY' : '', { shouldDirty: true, shouldValidate: true });
+    if ((currentPosition || placement === 'BIYAN SECURITY' || placement === 'PT.BLITZ ELECTRIC') && !allowedPositions.includes(currentPosition)) {
+      setValue('position', placement === 'BIYAN SECURITY' ? 'SECURITY' : placement === 'PT.BLITZ ELECTRIC' ? 'SPRINTER' : '', { shouldDirty: true, shouldValidate: true });
     }
     if (placement !== 'LAZADA') {
       setValue('hub', '', { shouldDirty: true });
