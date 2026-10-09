@@ -26,3 +26,12 @@ export function sanitizeUpper(value: unknown): string {
 export function digitsOnly(value: unknown): string {
   return String(value ?? '').replace(/\D/g, '');
 }
+
+export function sanitizeUpperInput(value: unknown): string {
+  return sanitizeTextInput(value).toUpperCase();
+}
+
+// Trim only after editing, so spaces between words remain typeable.
+export function finalizeTextInput(value: unknown): string {
+  return String(value ?? "").trim();
+}

@@ -352,7 +352,7 @@ export function PayrollForm() {
         bank_code: values.bankCode,
         bank_name: values.bankName,
         account_number: values.accountNumber,
-        account_owner: values.accountOwner,
+        account_owner: values.accountOwner.trim(),
         origin: window.location.origin,
       });
       setValue('accountValidation', {

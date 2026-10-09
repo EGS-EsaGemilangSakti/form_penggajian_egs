@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import type { FieldErrors, UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { useDistricts, useProvinces, useRegencies, useVillages } from '../../hooks/useRegional';
 import type { PayrollFormValues } from '../../types/payroll';
-import { sanitizeText, sanitizeTextInput } from '../../utils/sanitize';
+import { sanitizeText, sanitizeTextInput, finalizeTextInput } from '../../utils/sanitize';
 import { FieldShell, inputClass } from './FieldShell';
 import { SearchableSelect } from './SearchableSelect';
 
@@ -150,6 +150,7 @@ export function AddressField({
           maxLength={200}
           placeholder="Contoh: Jl. Merdeka No. 12, RT 003/RW 004, Blok A, patokan dekat masjid"
           value={addressDetail}
+          onBlur={(event) => setValue('addressDetail', finalizeTextInput(event.target.value), { shouldValidate: true, shouldTouch: true })}
           onChange={(event) => setValue('addressDetail', sanitizeTextInput(event.target.value), { shouldValidate: true })}
         />
       </FieldShell>
