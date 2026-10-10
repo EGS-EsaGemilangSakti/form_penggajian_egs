@@ -31,7 +31,7 @@ export const PLACEMENTS = [
 export const EMPLOYMENT_STATUSES = ['Freelance', 'Kontrak', 'Reguler'] as const;
 export const POSITIONS = ['Admin', 'Kordinator', 'Sorter', 'Driver', 'Kurir', 'Office Boy'] as const;
 export const LAZADA_POSITIONS = ['KURIR', 'Harian Lepas (HL)'] as const;
-export const PONTIANAK_POSITIONS = ['SORTER', 'BONGKAR MUAT', 'CLEANING SERVICE', 'SECURITY'] as const;
+export const PONTIANAK_POSITIONS = ['SORTER', 'BONGKAR MUAT', 'CLEANING SERVICE', 'SECURITY', 'KORDINATOR'] as const;
 export const BLITZ_POSITIONS = ['SPRINTER'] as const;
 export const BIYAN_SECURITY_POSITIONS = ['SECURITY'] as const;
 

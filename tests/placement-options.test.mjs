@@ -15,10 +15,10 @@ test('BLITZ has only SPRINTER and all existing placements retain their options',
   }
 });
 
-test('Pontianak offers exactly the four requested positions', () => {
+test('Pontianak offers exactly the five requested positions', () => {
   assert.ok(PLACEMENTS.includes('J&T CARGO Pontianak 99A'));
-  assert.deepEqual(getPositionsForPlacement('J&T CARGO Pontianak 99A'), ['SORTER', 'BONGKAR MUAT', 'CLEANING SERVICE', 'SECURITY']);
+  assert.deepEqual(getPositionsForPlacement('J&T CARGO Pontianak 99A'), ['SORTER', 'BONGKAR MUAT', 'CLEANING SERVICE', 'SECURITY', 'KORDINATOR']);
   for (const placement of PLACEMENTS.filter(value => value !== 'J&T CARGO Pontianak 99A')) {
-    for (const position of ['SORTER', 'BONGKAR MUAT', 'CLEANING SERVICE']) assert.ok(!getPositionsForPlacement(placement).includes(position));
+    for (const position of ['SORTER', 'BONGKAR MUAT', 'CLEANING SERVICE', 'KORDINATOR']) assert.ok(!getPositionsForPlacement(placement).includes(position));
   }
 });
