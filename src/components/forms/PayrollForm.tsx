@@ -1,3 +1,4 @@
+import { calculateAge, isAgeAllowed } from '../../utils/age';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, ArrowRight, BarChart3, BriefcaseBusiness, Check, CloudUpload, Info, Loader2, MapPin, Send, ShieldCheck, WalletCards } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -283,6 +284,7 @@ function SubmitLoadingOverlay() {
 
 export function PayrollForm() {
   const persistedDraft = useMemo(loadPersistedDraft, []);
+  const [ageWarning, setAgeWarning] = useState(false);
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(persistedDraft.currentStep ?? 1);
   const submitLock = useRef(false);
   const skipDraftPersistRef = useRef(false);
@@ -372,6 +374,10 @@ export function PayrollForm() {
   const selectedBank = useMemo(() => BANKS.find((bank) => bank.bank_code === bankCode), [bankCode]);
 
   const goToNextStep = async () => {
+    if (currentStep === 2 && !isAgeAllowed(watch('birthDate'), watch('placement'))) {
+      setAgeWarning(true);
+      return;
+    }
     const fields = stepFields[currentStep as keyof typeof stepFields];
     const isStepValid = await trigger([...fields]);
     if (!isStepValid) {
@@ -392,6 +398,11 @@ export function PayrollForm() {
   };
 
   const onSubmit = async (values: PayrollFormValues) => {
+    if (!isAgeAllowed(values.birthDate, values.placement)) {
+      setCurrentStep(2);
+      setAgeWarning(true);
+      return;
+    }
     if (submitLock.current) return;
     if (currentStep !== 3) {
       toast.error('Selesaikan step saat ini sebelum mengirim data');
@@ -481,6 +492,14 @@ export function PayrollForm() {
         <Stepper currentStep={currentStep} />
       </section>
 
+      {ageWarning ? <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-5">
+        <div role="dialog" aria-modal="true" aria-labelledby="age-warning-title" className="w-full max-w-md rounded-2xl border border-[#f2ca50]/30 bg-[#201f1f] p-6 text-white shadow-2xl">
+          <h2 id="age-warning-title" className="text-xl font-semibold">Usia Tidak Memenuhi Persyaratan</h2>
+          <p className="mt-4 leading-7">Maaf, usia Anda tidak memenuhi persyaratan pendaftaran untuk cabang yang dipilih. Silakan pilih cabang lain yang sesuai dengan kriteria Anda.</p>
+          <button type="button" autoFocus className="mt-6 w-full rounded-xl bg-[#f2ca50] px-4 py-3 font-bold text-[#3c2f00]" onClick={() => setAgeWarning(false)}>Mengerti</button>
+        </div>
+      </div> : null}
+      <p aria-live="polite" className="text-sm text-[#f2ca50]">Usia: {calculateAge(watch('birthDate')) === null ? '—' : calculateAge(watch('birthDate')) + ' tahun'}</p>
       <StepIntro step={currentStep as 1 | 2 | 3} />
 
       {currentStep === 1 ? (

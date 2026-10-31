@@ -1,3 +1,4 @@
+import { isAgeAllowed } from '../utils/age';
 import { z } from 'zod';
 import { MIN_ACCOUNT_VALIDATION_SCORE } from '../constants/accountValidation';
 import { BANKS } from '../constants/banks';
@@ -93,6 +94,7 @@ export const payrollSchema = z
     formStartedAt: z.string().min(1),
   })
   .superRefine((data, ctx) => {
+    if (!isAgeAllowed(data.birthDate, data.placement)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['placement'], message: 'Usia Tidak Memenuhi Persyaratan: cabang ini mensyaratkan usia 18–50 tahun' });
     if (data.placement === 'LAZADA') {
       if (!LAZADA_HUBS.includes(data.hub as (typeof LAZADA_HUBS)[number])) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['hub'], message: 'Hub wajib dipilih' });
