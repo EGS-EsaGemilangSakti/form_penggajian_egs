@@ -2,7 +2,7 @@ import { isAgeAllowed } from '../utils/age';
 import { z } from 'zod';
 import { MIN_ACCOUNT_VALIDATION_SCORE } from '../constants/accountValidation';
 import { BANKS } from '../constants/banks';
-import { PONTIANAK_POSITIONS, BLITZ_POSITIONS, BIYAN_SECURITY_POSITIONS, EMPLOYMENT_STATUSES, LAZADA_HUBS, LAZADA_POSITIONS, OWNERSHIP_STATUSES, PLACEMENTS, POSITIONS } from '../constants/placements';
+import { PONTIANAK_POSITIONS, BLITZ_POSITIONS, BIYAN_SECURITY_POSITIONS, KALIMANTAN_CARGO_POSITIONS, EMPLOYMENT_STATUSES, LAZADA_HUBS, LAZADA_POSITIONS, OWNERSHIP_STATUSES, PLACEMENTS, POSITIONS } from '../constants/placements';
 import { GENDERS, MARITAL_STATUSES, PTKP_CODES, RELIGIONS } from '../constants/personal';
 import { FAMILY_CARD_MIME_TYPES, KTP_MIME_TYPES, MAX_FILE_SIZE, POWER_OF_ATTORNEY_MIME_TYPES } from '../utils/validators';
 import { parseDisplayDate } from '../utils/formatters';
@@ -116,6 +116,10 @@ export const payrollSchema = z
     } else if (data.placement === 'BIYAN SECURITY') {
       if (!BIYAN_SECURITY_POSITIONS.includes(data.position as (typeof BIYAN_SECURITY_POSITIONS)[number])) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['position'], message: 'Posisi BIYAN SECURITY harus SECURITY' });
+      }
+    } else if (['CARGO BANJARMASIN', 'CARGO SAMARINDA', 'CARGO BALIKPAPAN'].includes(data.placement)) {
+      if (!KALIMANTAN_CARGO_POSITIONS.includes(data.position as (typeof KALIMANTAN_CARGO_POSITIONS)[number])) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['position'], message: 'Posisi Cargo Kalimantan harus KOORDINATOR, REGULER, atau FREELANCE' });
       }
     } else if (!POSITIONS.includes(data.position as (typeof POSITIONS)[number])) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['position'], message: 'Posisi tidak valid untuk penempatan ini' });
