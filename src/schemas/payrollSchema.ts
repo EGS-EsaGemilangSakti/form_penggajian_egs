@@ -72,7 +72,7 @@ export const payrollSchema = z
       .max(100, 'ID maksimal 100 digit')
       .regex(/^\d*$/, 'ID hanya boleh berisi angka'),
     employmentStatus: z.enum(EMPLOYMENT_STATUSES, { message: 'Status karyawan wajib dipilih' }),
-    position: z.enum([...POSITIONS, ...LAZADA_POSITIONS, ...BIYAN_SECURITY_POSITIONS, ...BLITZ_POSITIONS, ...PONTIANAK_POSITIONS], { message: 'Posisi wajib dipilih' }),
+    position: z.enum([...POSITIONS, ...LAZADA_POSITIONS, ...BIYAN_SECURITY_POSITIONS, ...BLITZ_POSITIONS, ...PONTIANAK_POSITIONS, ...KALIMANTAN_CARGO_POSITIONS], { message: 'Posisi wajib dipilih' }),
     firstWorkDate: z.string().refine((value) => parseDisplayDate(value) !== null, 'Tanggal kerja pertama wajib berformat DD/MM/YYYY'),
     bankCode: z.string().refine((code) => BANKS.some((bank) => bank.bank_code === code), 'Bank wajib dipilih'),
     bankName: z.string().min(1, 'Bank wajib dipilih'),
