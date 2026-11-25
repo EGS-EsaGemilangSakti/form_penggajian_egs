@@ -4,7 +4,7 @@ import test from 'node:test';
 import ts from 'typescript';
 const source = await readFile(new URL('../src/constants/placements.ts', import.meta.url), 'utf8');
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext } }).outputText;
-const { PLACEMENTS, POSITIONS, LAZADA_POSITIONS, BIYAN_SECURITY_POSITIONS, KALIMANTAN_CARGO_POSITIONS, getPositionsForPlacement } = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
+const { PLACEMENTS, POSITIONS, LAZADA_POSITIONS, BIYAN_SECURITY_POSITIONS, KALIMANTAN_CARGO_POSITIONS, PAXEL_SPRINTER_POSITIONS, getPositionsForPlacement } = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
 test('BLITZ has only SPRINTER and all existing placements retain their options', () => {
   assert.ok(PLACEMENTS.includes('PT.BLITZ ELECTRIC'));
   assert.deepEqual(getPositionsForPlacement('PT.BLITZ ELECTRIC'), ['SPRINTER']);
@@ -13,17 +13,23 @@ test('BLITZ has only SPRINTER and all existing placements retain their options',
     assert.ok(PLACEMENTS.includes(placement));
     assert.deepEqual(getPositionsForPlacement(placement), KALIMANTAN_CARGO_POSITIONS);
   }
-  for (const placement of PLACEMENTS.filter(value => value !== 'PT.BLITZ ELECTRIC' && value !== 'J&T CARGO Pontianak 99A' && !kalimantanCargo.includes(value))) {
+  for (const placement of PLACEMENTS.filter(value => value !== 'PT.BLITZ ELECTRIC' && value !== 'J&T CARGO Pontianak 99A' && value !== 'PAXEL SPRINTER' && !kalimantanCargo.includes(value))) {
     const expected = placement === 'LAZADA' ? LAZADA_POSITIONS : placement === 'BIYAN SECURITY' ? BIYAN_SECURITY_POSITIONS : POSITIONS;
     assert.deepEqual(getPositionsForPlacement(placement), expected);
     assert.ok(!getPositionsForPlacement(placement).includes('SPRINTER'));
   }
 });
 
+test('PAXEL SPRINTER has only KORDINATOR and SPRINTER positions', () => {
+  assert.ok(PLACEMENTS.includes('PAXEL SPRINTER'));
+  assert.deepEqual(getPositionsForPlacement('PAXEL SPRINTER'), PAXEL_SPRINTER_POSITIONS);
+  assert.deepEqual(PAXEL_SPRINTER_POSITIONS, ['KORDINATOR', 'SPRINTER']);
+});
+
 test('Pontianak offers exactly the five requested positions', () => {
   assert.ok(PLACEMENTS.includes('J&T CARGO Pontianak 99A'));
   assert.deepEqual(getPositionsForPlacement('J&T CARGO Pontianak 99A'), ['SORTER', 'BONGKAR MUAT', 'CLEANING SERVICE', 'SECURITY', 'KORDINATOR']);
-  for (const placement of PLACEMENTS.filter(value => value !== 'J&T CARGO Pontianak 99A')) {
+  for (const placement of PLACEMENTS.filter(value => value !== 'J&T CARGO Pontianak 99A' && value !== 'PAXEL SPRINTER')) {
     for (const position of ['SORTER', 'BONGKAR MUAT', 'CLEANING SERVICE', 'KORDINATOR']) assert.ok(!getPositionsForPlacement(placement).includes(position));
   }
 });

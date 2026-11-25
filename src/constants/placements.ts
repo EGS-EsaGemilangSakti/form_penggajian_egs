@@ -29,6 +29,7 @@ export const PLACEMENTS = [
   'CARGO BANJARMASIN',
   'CARGO SAMARINDA',
   'CARGO BALIKPAPAN',
+  'PAXEL SPRINTER'
 ] as const;
 
 export const EMPLOYMENT_STATUSES = ['Freelance', 'Kontrak', 'Reguler'] as const;
@@ -38,6 +39,7 @@ export const PONTIANAK_POSITIONS = ['SORTER', 'BONGKAR MUAT', 'CLEANING SERVICE'
 export const BLITZ_POSITIONS = ['SPRINTER'] as const;
 export const BIYAN_SECURITY_POSITIONS = ['SECURITY'] as const;
 export const KALIMANTAN_CARGO_POSITIONS = ['KOORDINATOR', 'REGULER', 'FREELANCE'] as const;
+export const PAXEL_SPRINTER_POSITIONS = ['KORDINATOR', 'SPRINTER'] as const;
 
 export function getPositionsForPlacement(placement: string): readonly string[] {
   if (['CARGO BANJARMASIN', 'CARGO SAMARINDA', 'CARGO BALIKPAPAN'].includes(placement)) return KALIMANTAN_CARGO_POSITIONS;
@@ -45,6 +47,7 @@ export function getPositionsForPlacement(placement: string): readonly string[] {
   if (placement === 'PT.BLITZ ELECTRIC') return BLITZ_POSITIONS;
   if (placement === 'LAZADA') return LAZADA_POSITIONS;
   if (placement === 'BIYAN SECURITY') return BIYAN_SECURITY_POSITIONS;
+  if (placement === 'PAXEL SPRINTER') return PAXEL_SPRINTER_POSITIONS;
   return POSITIONS;
 }
 export const LAZADA_HUBS = [
